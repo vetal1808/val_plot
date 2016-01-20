@@ -1,0 +1,30 @@
+c:\users\vetal\documents\visual studio 2015\Projects\val_plot\val_plot\bin\Debug\val_plot.exe.config
+c:\users\vetal\documents\visual studio 2015\Projects\val_plot\val_plot\bin\Debug\val_plot.exe
+c:\users\vetal\documents\visual studio 2015\Projects\val_plot\val_plot\bin\Debug\val_plot.pdb
+c:\users\vetal\documents\visual studio 2015\Projects\val_plot\val_plot\obj\Debug\val_plot.csprojResolveAssemblyReference.cache
+c:\users\vetal\documents\visual studio 2015\Projects\val_plot\val_plot\obj\Debug\val_plot.Properties.Resources.resources
+c:\users\vetal\documents\visual studio 2015\Projects\val_plot\val_plot\obj\Debug\val_plot.csproj.GenerateResource.Cache
+c:\users\vetal\documents\visual studio 2015\Projects\val_plot\val_plot\obj\Debug\val_plot.exe
+c:\users\vetal\documents\visual studio 2015\Projects\val_plot\val_plot\obj\Debug\val_plot.pdb
+C:\Users\vetal\Documents\Visual Studio 2015\Projects\val_plot\val_plot\obj\Debug\val_plot.Form1.resources
+C:\Users\a.sokolovsky\Desktop\val_plot\val_plot\bin\Debug\val_plot.exe.config
+C:\Users\a.sokolovsky\Desktop\val_plot\val_plot\obj\Debug\val_plot.exe
+C:\Users\a.sokolovsky\Desktop\val_plot\val_plot\obj\Debug\val_plot.pdb
+C:\Users\a.sokolovsky\Desktop\val_plot\val_plot\obj\Debug\val_plot.csprojResolveAssemblyReference.cache
+C:\Users\a.sokolovsky\Desktop\val_plot\val_plot\obj\Debug\val_plot.Form1.resources
+C:\Users\a.sokolovsky\Desktop\val_plot\val_plot\obj\Debug\val_plot.Properties.Resources.resources
+C:\Users\a.sokolovsky\Desktop\val_plot\val_plot\obj\Debug\val_plot.csproj.GenerateResource.Cache
+C:\Users\a.sokolovsky\Desktop\val_plot\val_plot\bin\Debug\val_plot.exe
+C:\Users\a.sokolovsky\Desktop\val_plot\val_plot\bin\Debug\val_plot.pdb
+C:\Users\vetal\Desktop\val_plot\val_plot\val_plot\bin\Debug\val_plot.exe.config
+C:\Users\vetal\Desktop\val_plot\val_plot\val_plot\obj\Debug\val_plot.exe
+C:\Users\vetal\Desktop\val_plot\val_plot\val_plot\obj\Debug\val_plot.pdb
+C:\Users\vetal\Desktop\val_plot\val_plot\val_plot\bin\Debug\val_plot.exe
+C:\Users\vetal\Desktop\val_plot\val_plot\val_plot\bin\Debug\val_plot.pdb
+C:\Users\vetal\Desktop\val_plot\val_plot\val_plot\obj\Debug\val_plot.csprojResolveAssemblyReference.cache
+C:\Users\vetal\Desktop\val_plot\val_plot\val_plot\obj\Debug\val_plot.Form1.resources
+C:\Users\vetal\Desktop\val_plot\val_plot\val_plot\obj\Debug\val_plot.Properties.Resources.resources
+C:\Users\vetal\Desktop\val_plot\val_plot\val_plot\obj\Debug\val_plot.csproj.GenerateResource.Cache
+C:\Users\vetal\Desktop\actel source 3\copter\val_plot\val_plot\bin\Debug\val_plot.exe.config
+C:\Users\vetal\Desktop\actel source 3\copter\val_plot\val_plot\obj\Debug\val_plot.exe
+C:\Users\vetal\Desktop\actel source 3\copter\val_plot\val_plot\obj\Debug\val_plot.pdb
