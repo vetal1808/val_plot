@@ -3,6 +3,7 @@ using System.IO.Ports;
 using System.Threading;
 using System.Windows.Forms;
 using System.Drawing;
+using SharpDX.DirectInput;
 
 namespace val_plot
 {
@@ -41,7 +42,9 @@ namespace val_plot
         static int j = 0;
         static bool[] _isDrawing = new bool[12];
         static Graphics g;
-
+        static bool _joysticConnect = false, _is_joysticConnect = false;
+        static int pitch0_prev = 50, roll0_prev = 50;
+        static int pitch0_curr = 50, roll0_curr = 50;
         #endregion [Properties]
 
         #region [Handlers]
@@ -57,6 +60,8 @@ namespace val_plot
             g = this.CanvasPanel.CreateGraphics();
             Thread drawerThread = new Thread(Drawer);
             drawerThread.Start();
+            Thread joystickThread = new Thread(_Joystic);
+            joystickThread.Start();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -130,6 +135,17 @@ namespace val_plot
             _serialPort.Write("b");
         }
 
+        private void button16_Click(object sender, EventArgs e)
+        {
+            _serialPort.Write("L");
+            _serialPort.Write("P");
+            _serialPort.Write(":");
+            _serialPort.Write("1");
+            _serialPort.Write("0");
+            _serialPort.Write("0");
+            _serialPort.Write(":");
+        }
+
         private void button13_Click(object sender, EventArgs e)
         {
             _serialPort.Write("n");
@@ -139,6 +155,8 @@ namespace val_plot
         {
             _serialPort.Write("m");
         }
+
+
 
         private void Form1_Load(object sender, System.EventArgs e)
         {
@@ -245,5 +263,118 @@ namespace val_plot
                 }
             }
         }
+        public static void _Joystic()
+        {
+            /*
+            while (_joysticConnect == false)
+            {
+                Thread.Sleep(1000);
+
+            }
+            */
+            var directInput = new DirectInput();
+
+            // Find a Joystick Guid
+            var joystickGuid = Guid.Empty;
+
+
+            foreach (var deviceInstance in directInput.GetDevices(DeviceType.Gamepad,
+                    DeviceEnumerationFlags.AllDevices))
+            {
+                joystickGuid = deviceInstance.InstanceGuid;
+                _is_joysticConnect = true;
+
+            }
+            // If Gamepad not found, look for a Joystick
+            if (joystickGuid == Guid.Empty)
+                foreach (var deviceInstance in directInput.GetDevices(DeviceType.Joystick,
+                        DeviceEnumerationFlags.AllDevices))
+            {
+                joystickGuid = deviceInstance.InstanceGuid;
+                _is_joysticConnect = true;
+            }
+            // If Joystick not found, throws an error
+            if (joystickGuid == Guid.Empty)
+            {
+                Console.WriteLine("No joystick/Gamepad found.");
+                _is_joysticConnect = false;
+            }
+
+            if (_is_joysticConnect)
+            {
+                var joystick = new Joystick(directInput, joystickGuid);
+
+                Console.WriteLine("Found Joystick/Gamepad with GUID: {0}", joystickGuid);
+
+                // Query all suported ForceFeedback effects
+                var allEffects = joystick.GetEffects();
+                foreach (var effectInfo in allEffects)
+                    Console.WriteLine("Effect available {0}", effectInfo.Name);
+
+                // Set BufferSize in order to use buffered data.
+                joystick.Properties.BufferSize = 128;
+
+                // Acquire the joystick
+                joystick.Acquire();
+
+                // Poll events from joystick
+                var joystickState = new JoystickState();
+                while (_continue)
+                {
+                    joystick.Poll();
+                    var data = joystick.GetBufferedData();
+                    foreach (var state in data)
+                    {
+                        if (state.Offset == JoystickOffset.Z)
+                        {
+                            pitch0_curr = state.Value / 665;
+                            if(Math.Abs(pitch0_curr - pitch0_prev)>40)
+                            {
+                                string mes = "LP:" + Convert.ToString(pitch0_curr) + ":";
+                                _serialPort.WriteLine(mes);
+                                pitch0_prev = pitch0_curr;
+                            }
+                        }
+                        if (state.Offset == JoystickOffset.RotationZ)
+                        {
+                            roll0_curr = state.Value / 665;
+                            if (Math.Abs(roll0_curr - roll0_prev) > 40)
+                            {
+                                string mes = "LR:" + Convert.ToString(roll0_curr) + ":";
+                                _serialPort.WriteLine(mes);
+                                roll0_prev = roll0_curr;
+                            }
+                        }
+                        if (state.Offset == JoystickOffset.PointOfViewControllers0) // power
+                        {
+                            var val = state.Value;
+                            switch (val)
+                            {
+                                case 0:
+                                    _serialPort.Write("U");
+                                    break;
+                                case 9000:
+                                    _serialPort.Write("Q");
+                                    break;
+                                case 18000:
+                                    _serialPort.Write("D");
+                                    break;
+                                case 27000:
+                                    _serialPort.Write("q");
+                                    break;
+                            }
+
+                        }
+
+                    }
+                }
+            }
+
+
+
+
+
+        }
+        
     }
 }
