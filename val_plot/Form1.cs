@@ -43,8 +43,12 @@ namespace val_plot
         static bool[] _isDrawing = new bool[12];
         static Graphics g;
         static bool _joysticConnect = false, _is_joysticConnect = false;
-        static int pitch0_prev = 50, roll0_prev = 50;
-        static int pitch0_curr = 50, roll0_curr = 50;
+        static int pitch_prev = 50, roll_prev = 50;
+        static int pitch_curr = 50, roll_curr = 50;
+        static int pitch0 = 0, roll0 = 0;
+        static byte force = 0, prop = 3, diff = 3, integr = 3;
+
+
         #endregion [Properties]
 
         #region [Handlers]
@@ -77,83 +81,147 @@ namespace val_plot
 
         private void button2_Click(object sender, EventArgs e)
         {
-            _serialPort.Write("w");
+            pitch0++;
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
-            _serialPort.Write("q");
+            pitch0 = 0;
+            roll0 = 0;
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            _serialPort.Write("a");
+            roll0--;
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
-            _serialPort.Write("d");
+            roll0++;
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            _serialPort.Write("s");
+            pitch0--;
         }
 
         private void button7_Click(object sender, EventArgs e)
         {
-            _serialPort.Write("U");
+            if (force < 97)
+            {
+                force += 3;
+                string mes = Convert.ToString(force);
+                if (mes.Length == 1)
+                {
+                    mes = '0' + mes;
+                }
+                _serialPort.WriteLine('f' + mes);
+            }
         }
 
         private void button8_Click(object sender, EventArgs e)
         {
-            _serialPort.Write("Q");
+            force = 0;
+            _serialPort.WriteLine("f00\n");
         }
 
         private void button9_Click(object sender, EventArgs e)
         {
-            _serialPort.Write("D");
+            if (force > 2)
+            {
+                force -= 3;
+                string mes = Convert.ToString(force);
+                if (mes.Length == 1)
+                {
+                    mes = '0' + mes;
+                }
+                _serialPort.WriteLine('f' + mes);
+            }
         }
 
         private void button12_Click(object sender, EventArgs e)
         {
-            _serialPort.Write("B");
+            if(prop<99)
+            {
+                prop++;
+                string mes = Convert.ToString(prop);
+                if (mes.Length == 1)
+                {
+                    mes = '0' + mes;
+                }
+                _serialPort.WriteLine('P' + mes);
+            }
         }
 
         private void button10_Click(object sender, EventArgs e)
         {
-            _serialPort.Write("N");
+            if (integr < 99)
+            {
+                integr++;
+                string mes = Convert.ToString(integr);
+                if (mes.Length == 1)
+                {
+                    mes = '0' + mes;
+                }
+                _serialPort.WriteLine('I' + mes);
+            }
         }
 
         private void button11_Click(object sender, EventArgs e)
         {
-            _serialPort.Write("M");
+            if (diff >0)
+            {
+                diff--;
+                string mes = Convert.ToString(diff);
+                if (mes.Length == 1)
+                {
+                    mes = '0' + mes;
+                }
+                _serialPort.WriteLine('D' + mes);
+            }
         }
 
         private void button15_Click(object sender, EventArgs e)
         {
-            _serialPort.Write("b");
+            if (prop >0)
+            {
+                prop--;
+                string mes = Convert.ToString(prop);
+                if (mes.Length == 1)
+                {
+                    mes = '0' + mes;
+                }
+                _serialPort.WriteLine('P' + mes);
+            }
         }
 
-        private void button16_Click(object sender, EventArgs e)
-        {
-            _serialPort.Write("L");
-            _serialPort.Write("P");
-            _serialPort.Write(":");
-            _serialPort.Write("1");
-            _serialPort.Write("0");
-            _serialPort.Write("0");
-            _serialPort.Write(":");
-        }
 
         private void button13_Click(object sender, EventArgs e)
         {
-            _serialPort.Write("n");
+            if (integr >0)
+            {
+                integr--;
+                string mes = Convert.ToString(integr);
+                if (mes.Length == 1)
+                {
+                    mes = '0' + mes;
+                }
+                _serialPort.WriteLine('I' + mes);
+            }
         }
 
         private void button14_Click(object sender, EventArgs e)
         {
-            _serialPort.Write("m");
+            if (diff < 99)
+            {
+                diff++;
+                string mes = Convert.ToString(diff);
+                if (mes.Length == 1)
+                {
+                    mes = '0' + mes;
+                }
+                _serialPort.WriteLine('D' + mes);
+            }
         }
 
 
@@ -162,7 +230,7 @@ namespace val_plot
         {
             _serialPort = new SerialPort
             {
-                PortName = "COM10",
+                PortName = "COM4",
                 BaudRate = 9600,
                 ReadTimeout = 500,
                 WriteTimeout = 500
@@ -327,22 +395,30 @@ namespace val_plot
                     {
                         if (state.Offset == JoystickOffset.Z)
                         {
-                            pitch0_curr = state.Value / 665;
-                            if(Math.Abs(pitch0_curr - pitch0_prev)>40)
+                            pitch_curr = (state.Value / 1024) + 32+pitch0;
+                            if(Math.Abs(pitch_curr - pitch_prev)>5)
                             {
-                                string mes = "LP:" + Convert.ToString(pitch0_curr) + ":";
-                                _serialPort.WriteLine(mes);
-                                pitch0_prev = pitch0_curr;
+                                string mes = Convert.ToString(pitch_curr);
+                                if(mes.Length == 1)
+                                {
+                                    mes = '0' + mes;
+                                }
+                                _serialPort.WriteLine('p'+mes);
+                                pitch_prev = pitch_curr;
                             }
                         }
                         if (state.Offset == JoystickOffset.RotationZ)
                         {
-                            roll0_curr = state.Value / 665;
-                            if (Math.Abs(roll0_curr - roll0_prev) > 40)
+                            roll_curr = (state.Value / 1024) + 32 + roll0;
+                            if (Math.Abs(roll_curr - roll_prev) > 5)
                             {
-                                string mes = "LR:" + Convert.ToString(roll0_curr) + ":";
-                                _serialPort.WriteLine(mes);
-                                roll0_prev = roll0_curr;
+                                string mes = Convert.ToString(roll_curr);
+                                if (mes.Length == 1)
+                                {
+                                    mes = '0' + mes;
+                                }
+                                _serialPort.WriteLine('r' + mes);
+                                roll_prev = roll_curr;
                             }
                         }
                         if (state.Offset == JoystickOffset.PointOfViewControllers0) // power
@@ -351,16 +427,35 @@ namespace val_plot
                             switch (val)
                             {
                                 case 0:
-                                    _serialPort.Write("U");
+                                    if(force < 97)
+                                    {
+                                        force += 3;
+                                        string mes = Convert.ToString(force);
+                                        if (mes.Length == 1)
+                                        {
+                                            mes = '0' + mes;
+                                        }
+                                        _serialPort.WriteLine('f'+mes);
+                                    }
                                     break;
                                 case 9000:
-                                    _serialPort.Write("Q");
+                                    force = 0;
+                                    _serialPort.WriteLine("f00\n");
                                     break;
                                 case 18000:
-                                    _serialPort.Write("D");
+                                    if (force >2)
+                                    {
+                                        force -= 3;
+                                        string mes = Convert.ToString(force);
+                                        if (mes.Length == 1)
+                                        {
+                                            mes = '0' + mes;
+                                        }
+                                        _serialPort.WriteLine('f'+mes);
+                                    }
                                     break;
                                 case 27000:
-                                    _serialPort.Write("q");
+                                    //NOP
                                     break;
                             }
 

@@ -46,10 +46,7 @@
             this.button14 = new System.Windows.Forms.Button();
             this.button15 = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
             this.textBox4 = new System.Windows.Forms.TextBox();
-            this.button16 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // CanvasPanel
@@ -188,11 +185,11 @@
             // 
             // button11
             // 
-            this.button11.Location = new System.Drawing.Point(921, 411);
+            this.button11.Location = new System.Drawing.Point(921, 450);
             this.button11.Name = "button11";
             this.button11.Size = new System.Drawing.Size(35, 33);
             this.button11.TabIndex = 12;
-            this.button11.Text = "D↑";
+            this.button11.Text = "D↓";
             this.button11.UseVisualStyleBackColor = true;
             this.button11.Click += new System.EventHandler(this.button11_Click);
             // 
@@ -218,11 +215,11 @@
             // 
             // button14
             // 
-            this.button14.Location = new System.Drawing.Point(920, 450);
+            this.button14.Location = new System.Drawing.Point(921, 411);
             this.button14.Name = "button14";
             this.button14.Size = new System.Drawing.Size(35, 33);
             this.button14.TabIndex = 15;
-            this.button14.Text = "D↓";
+            this.button14.Text = "D↑";
             this.button14.UseVisualStyleBackColor = true;
             this.button14.Click += new System.EventHandler(this.button14_Click);
             // 
@@ -245,20 +242,6 @@
             this.textBox1.TabIndex = 17;
             this.textBox1.Text = "POWER";
             // 
-            // textBox2
-            // 
-            this.textBox2.Location = new System.Drawing.Point(0, 0);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(100, 20);
-            this.textBox2.TabIndex = 18;
-            // 
-            // textBox3
-            // 
-            this.textBox3.Location = new System.Drawing.Point(0, 0);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(100, 20);
-            this.textBox3.TabIndex = 19;
-            // 
             // textBox4
             // 
             this.textBox4.Location = new System.Drawing.Point(898, 256);
@@ -268,25 +251,12 @@
             this.textBox4.Text = "Normal vector";
             this.textBox4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
-            // button16
-            // 
-            this.button16.Location = new System.Drawing.Point(834, 520);
-            this.button16.Name = "button16";
-            this.button16.Size = new System.Drawing.Size(144, 84);
-            this.button16.TabIndex = 21;
-            this.button16.Text = "button16";
-            this.button16.UseVisualStyleBackColor = true;
-            this.button16.Click += new System.EventHandler(this.button16_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1000, 650);
-            this.Controls.Add(this.button16);
             this.Controls.Add(this.textBox4);
-            this.Controls.Add(this.textBox3);
-            this.Controls.Add(this.textBox2);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.button13);
             this.Controls.Add(this.button14);
@@ -334,10 +304,7 @@
         private System.Windows.Forms.Button button14;
         private System.Windows.Forms.Button button15;
         private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.TextBox textBox4;
-        private System.Windows.Forms.Button button16;
     }
 }
 
