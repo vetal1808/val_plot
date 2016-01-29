@@ -3,6 +3,7 @@ using System.IO.Ports;
 using System.Threading;
 using System.Windows.Forms;
 using System.Drawing;
+using SharpDX.DirectInput;
 
 namespace val_plot
 {
@@ -33,6 +34,7 @@ namespace val_plot
         static SerialPort _serialPort;
         static int[] prev = new int[13];
         static int[] curr = new int[13];
+        static int d_t = 0;
         static Pen pRed = new Pen(Color.Red, 1);
         static Pen pGreen = new Pen(Color.Green, 1);
         static Pen pBlue = new Pen(Color.Blue, 1);
@@ -41,6 +43,12 @@ namespace val_plot
         static int j = 0;
         static bool[] _isDrawing = new bool[12];
         static Graphics g;
+        static bool _joysticConnect = false, _is_joysticConnect = false;
+        static int pitch_prev = 50, roll_prev = 50;
+        static int pitch_curr = 50, roll_curr = 50;
+        static int pitch0 = 0, roll0 = 0;
+        static ushort force = 0, prop = 16, diff = 8, integr = 3, limP = 40, limI = 16, limD = 40;
+        static uint mask=0;
 
         #endregion [Properties]
 
@@ -57,6 +65,8 @@ namespace val_plot
             g = this.CanvasPanel.CreateGraphics();
             Thread drawerThread = new Thread(Drawer);
             drawerThread.Start();
+            Thread joystickThread = new Thread(_Joystic);
+            joystickThread.Start();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -72,79 +82,259 @@ namespace val_plot
 
         private void button2_Click(object sender, EventArgs e)
         {
-            _serialPort.Write("w");
+            pitch0++;
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
-            _serialPort.Write("q");
+            pitch0 = 0;
+            roll0 = 0;
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            _serialPort.Write("a");
+            roll0--;
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
-            _serialPort.Write("d");
+            roll0++;
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            _serialPort.Write("s");
+            pitch0--;
         }
 
         private void button7_Click(object sender, EventArgs e)
         {
-            _serialPort.Write("U");
+            if (force < 970)
+            {
+                force += 30;
+                string mes = Convert.ToString(force);
+                while (mes.Length < 5)
+                {
+                    mes = '0' + mes;
+                }
+                _serialPort.WriteLine('f' + mes);
+            }
+        }
+
+        private void button16_Click(object sender, EventArgs e)
+        {
+            if (limP >1)
+            {
+                limP--;
+                string mes = Convert.ToString(limP);
+                while (mes.Length < 5)
+                {
+                    mes = '0' + mes;
+                }
+                _serialPort.WriteLine('x' + mes);
+            }
+        }
+
+        private void button19_Click(object sender, EventArgs e)
+        {
+            if (limP < 99)
+            {
+                limP++;
+                string mes = Convert.ToString(limP);
+                while (mes.Length < 5)
+                {
+                    mes = '0' + mes;
+                }
+                _serialPort.WriteLine('x' + mes);
+            }
+        }
+
+        private void button18_Click(object sender, EventArgs e)
+        {
+            if (limD < 99)
+            {
+                limD++;
+                string mes = Convert.ToString(limD);
+                while (mes.Length < 5)
+                {
+                    mes = '0' + mes;
+                }
+                _serialPort.WriteLine('z' + mes);
+            }
+        }
+
+        private void button22_Click(object sender, EventArgs e)
+        {
+            mask = 0;
+            for(var k=0;k<12;k++)
+            {
+                if(_isDrawing[k])
+                {
+                    mask += Convert.ToUInt32(Math.Pow(2, k));
+                }
+            }
+            string mes = Convert.ToString(mask);
+            while (mes.Length < 5)
+            {
+                mes = '0' + mes;
+            }
+            _serialPort.WriteLine('m' + mes);
+
+        }
+
+        private void button20_Click(object sender, EventArgs e)
+        {
+            if (limI < 99)
+            {
+                limI++;
+                string mes = Convert.ToString(limI);
+                while (mes.Length < 5)
+                {
+                    mes = '0' + mes;
+                }
+                _serialPort.WriteLine('w' + mes);
+            }
+        }
+
+        private void button21_Click(object sender, EventArgs e)
+        {
+            if (limI < 1)
+            {
+                limI--;
+                string mes = Convert.ToString(limI);
+                while (mes.Length < 5)
+                {
+                    mes = '0' + mes;
+                }
+                _serialPort.WriteLine('w' + mes);
+            }
+        }
+
+        private void button17_Click(object sender, EventArgs e)
+        {
+            if (limD >1)
+            {
+                limD--;
+                string mes = Convert.ToString(limD);
+                while (mes.Length < 5)
+                {
+                    mes = '0' + mes;
+                }
+                _serialPort.WriteLine('z' + mes);
+            }
         }
 
         private void button8_Click(object sender, EventArgs e)
         {
-            _serialPort.Write("Q");
+            force = 0;
+            _serialPort.WriteLine("f00\n");
         }
 
         private void button9_Click(object sender, EventArgs e)
         {
-            _serialPort.Write("D");
+            if (force > 29)
+            {
+                force -= 30;
+                string mes = Convert.ToString(force);
+                while (mes.Length < 5)
+                {
+                    mes = '0' + mes;
+                }
+                _serialPort.WriteLine('f' + mes);
+            }
         }
 
         private void button12_Click(object sender, EventArgs e)
         {
-            _serialPort.Write("B");
+            if(prop<99)
+            {
+                prop++;
+                string mes = Convert.ToString(prop);
+                while (mes.Length < 5)
+                {
+                    mes = '0' + mes;
+                }
+                _serialPort.WriteLine('P' + mes);
+            }
         }
 
         private void button10_Click(object sender, EventArgs e)
         {
-            _serialPort.Write("N");
+            if (integr < 99)
+            {
+                integr++;
+                string mes = Convert.ToString(integr);
+                while (mes.Length < 5)
+                {
+                    mes = '0' + mes;
+                }
+                _serialPort.WriteLine('I' + mes);
+            }
         }
 
         private void button11_Click(object sender, EventArgs e)
         {
-            _serialPort.Write("M");
+            if (diff >0)
+            {
+                diff--;
+                string mes = Convert.ToString(diff);
+                while (mes.Length < 5)
+                {
+                    mes = '0' + mes;
+                }
+                _serialPort.WriteLine('D' + mes);
+            }
         }
 
         private void button15_Click(object sender, EventArgs e)
         {
-            _serialPort.Write("b");
+            if (prop >0)
+            {
+                prop--;
+                string mes = Convert.ToString(prop);
+                while (mes.Length < 5)
+                {
+                    mes = '0' + mes;
+                }
+                _serialPort.WriteLine('P' + mes);
+            }
         }
+
 
         private void button13_Click(object sender, EventArgs e)
         {
-            _serialPort.Write("n");
+            if (integr >0)
+            {
+                integr--;
+                string mes = Convert.ToString(integr);
+                while (mes.Length < 5)
+                {
+                    mes = '0' + mes;
+                }
+                _serialPort.WriteLine('I' + mes);
+            }
         }
 
         private void button14_Click(object sender, EventArgs e)
         {
-            _serialPort.Write("m");
+            if (diff < 99)
+            {
+                diff++;
+                string mes = Convert.ToString(diff);
+                while (mes.Length < 5)
+                {
+                    mes = '0' + mes;
+                }
+                _serialPort.WriteLine('D' + mes);
+            }
         }
+
+
 
         private void Form1_Load(object sender, System.EventArgs e)
         {
             _serialPort = new SerialPort
             {
-                PortName = "COM10",
+                PortName = "COM4",
                 BaudRate = 9600,
                 ReadTimeout = 500,
                 WriteTimeout = 500
@@ -170,10 +360,10 @@ namespace val_plot
                 try
                 {
                     message = _serialPort.ReadLine();
-                    if(message[1] == ':' && message[0] >='A' && message[0]<='W')
+                    if(message[0] >='A' && message[0]<='W')
                     {
                         char lol = message[0];
-                        message = message.Remove(0, 2);
+                        message = message.Remove(0, 1);
                         switch (lol)
                         {
                             case 'A':                            
@@ -212,6 +402,9 @@ namespace val_plot
                             case 'L':
                                 curr[11] = (Convert.ToInt32(message) + 32768) / div2;
                                 break;
+                            case 'M':
+                                d_t = (Convert.ToInt32(message));
+                                break;
                             case 'W':
                                 if (_draw)
                                 {
@@ -245,5 +438,156 @@ namespace val_plot
                 }
             }
         }
+        public static void _Joystic()
+        {
+            /*
+            while (_joysticConnect == false)
+            {
+                Thread.Sleep(1000);
+
+            }
+            */
+            var directInput = new DirectInput();
+
+            // Find a Joystick Guid
+            var joystickGuid = Guid.Empty;
+
+
+            foreach (var deviceInstance in directInput.GetDevices(DeviceType.Gamepad,
+                    DeviceEnumerationFlags.AllDevices))
+            {
+                joystickGuid = deviceInstance.InstanceGuid;
+                _is_joysticConnect = true;
+
+            }
+            // If Gamepad not found, look for a Joystick
+            if (joystickGuid == Guid.Empty)
+                foreach (var deviceInstance in directInput.GetDevices(DeviceType.Joystick,
+                        DeviceEnumerationFlags.AllDevices))
+            {
+                joystickGuid = deviceInstance.InstanceGuid;
+                _is_joysticConnect = true;
+            }
+            // If Joystick not found, throws an error
+            if (joystickGuid == Guid.Empty)
+            {
+                Console.WriteLine("No joystick/Gamepad found.");
+                _is_joysticConnect = false;
+            }
+
+            if (_is_joysticConnect)
+            {
+                var joystick = new Joystick(directInput, joystickGuid);
+
+                Console.WriteLine("Found Joystick/Gamepad with GUID: {0}", joystickGuid);
+
+                // Query all suported ForceFeedback effects
+                var allEffects = joystick.GetEffects();
+                foreach (var effectInfo in allEffects)
+                    Console.WriteLine("Effect available {0}", effectInfo.Name);
+
+                // Set BufferSize in order to use buffered data.
+                joystick.Properties.BufferSize = 128;
+
+                // Acquire the joystick
+                joystick.Acquire();
+
+                // Poll events from joystick
+                var joystickState = new JoystickState();
+                bool work;
+                while (_continue )
+                {
+                    work = false;
+                    joystick.Poll();
+                    var data = joystick.GetBufferedData();
+                    foreach (var state in data)
+                    {
+                        if (state.Offset == JoystickOffset.Z)
+                        {
+                            pitch_curr = ((state.Value) / 33) + 500 + pitch0 * 10;
+                            if(Math.Abs(pitch_curr - pitch_prev)>100)
+                            {
+                                string mes = Convert.ToString(pitch_curr);
+                                while (mes.Length < 5)
+                                {
+                                    mes = '0' + mes;
+                                }
+                                _serialPort.WriteLine('p'+mes);
+                                pitch_prev = pitch_curr;
+                                
+                            }
+                            work = true;
+                        }
+                        if (state.Offset == JoystickOffset.RotationZ)
+                        {
+                            roll_curr = ((65536 - state.Value) / 33) + 500 + roll0*10;
+                            if (Math.Abs(roll_curr - roll_prev) > 100)
+                            {
+                                string mes = Convert.ToString(roll_curr);
+                                while (mes.Length < 5)
+                                {
+                                    mes = '0' + mes;
+                                }
+                                _serialPort.WriteLine('r' + mes);
+                                roll_prev = roll_curr;
+                                
+                            }
+                            work = true;
+                        }
+                        if (state.Offset == JoystickOffset.PointOfViewControllers0) // power
+                        {
+                            work = true;
+                            var val = state.Value;
+                            switch (val)
+                            {
+                                case 0:
+                                    if(force < 970)
+                                    {
+                                        force += 30;
+                                        string mes = Convert.ToString(force);
+                                        while (mes.Length < 5)
+                                        {
+                                            mes = '0' + mes;
+                                        }
+                                        _serialPort.WriteLine('f'+mes);
+                                    }
+                                    break;
+                                case 9000:
+                                    force = 0;
+                                    _serialPort.WriteLine("f00000\n");
+                                    break;
+                                case 18000:
+                                    if (force >29)
+                                    {
+                                        force -= 30;
+                                        string mes = Convert.ToString(force);
+                                        while (mes.Length < 5)
+                                        {
+                                            mes = '0' + mes;
+                                        }
+                                        _serialPort.WriteLine('f'+mes);
+                                    }
+                                    break;
+                                case 27000:
+                                    //NOP
+                                    break;
+                            }
+
+                        }
+                        if(work == false)
+                        {
+                            Thread.Sleep(200);
+                        }
+
+                    }
+                }
+            }
+
+
+
+
+
+        }
+        
     }
 }
