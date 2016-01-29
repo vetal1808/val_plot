@@ -28,3 +28,13 @@ C:\Users\vetal\Desktop\val_plot\val_plot\val_plot\obj\Debug\val_plot.csproj.Gene
 C:\Users\vetal\Desktop\actel source 3\copter\val_plot\val_plot\bin\Debug\val_plot.exe.config
 C:\Users\vetal\Desktop\actel source 3\copter\val_plot\val_plot\obj\Debug\val_plot.exe
 C:\Users\vetal\Desktop\actel source 3\copter\val_plot\val_plot\obj\Debug\val_plot.pdb
+C:\Users\vetal\Desktop\actel source 3\copter\val_plot\val_plot\bin\Debug\val_plot.exe
+C:\Users\vetal\Desktop\actel source 3\copter\val_plot\val_plot\bin\Debug\val_plot.pdb
+C:\Users\vetal\Desktop\actel source 3\copter\val_plot\val_plot\bin\Debug\SharpDX.DirectInput.dll
+C:\Users\vetal\Desktop\actel source 3\copter\val_plot\val_plot\bin\Debug\SharpDX.dll
+C:\Users\vetal\Desktop\actel source 3\copter\val_plot\val_plot\bin\Debug\SharpDX.xml
+C:\Users\vetal\Desktop\actel source 3\copter\val_plot\val_plot\bin\Debug\SharpDX.DirectInput.xml
+C:\Users\vetal\Desktop\actel source 3\copter\val_plot\val_plot\obj\Debug\val_plot.csprojResolveAssemblyReference.cache
+C:\Users\vetal\Desktop\actel source 3\copter\val_plot\val_plot\obj\Debug\val_plot.Form1.resources
+C:\Users\vetal\Desktop\actel source 3\copter\val_plot\val_plot\obj\Debug\val_plot.Properties.Resources.resources
+C:\Users\vetal\Desktop\actel source 3\copter\val_plot\val_plot\obj\Debug\val_plot.csproj.GenerateResource.Cache
