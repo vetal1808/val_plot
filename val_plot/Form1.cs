@@ -47,7 +47,7 @@ namespace val_plot
         static int pitch_prev = 50, roll_prev = 50;
         static int pitch_curr = 50, roll_curr = 50;
         static int pitch0 = 0, roll0 = 0;
-        static ushort force = 0, prop = 16, diff = 8, integr = 12, limP = 40, limI = 16, limD = 40;
+        static ushort force = 0, prop = 16, diff = 8, integr = 8, limP = 40, limI = 16, limD = 40;
         static uint print_mask=0;
         static bool[] motor_mask = { true, true, true, true };
 
@@ -606,6 +606,7 @@ namespace val_plot
         public static void Drawer()
         {
             string message;
+
             g.DrawLine(pGray, j, h / 2, w, h / 2);
             while (_continue)
             {
@@ -691,6 +692,9 @@ namespace val_plot
                     {
                         g.Clear(Color.White);
                         g.DrawLine(pGray, j, (h / 2)+1, w, (h / 2)+1); // середина экрана
+                        g.DrawLine(pGray, j, (h / 2) + 1 - 160, w, (h / 2) + 1 - 160); // середина экрана
+                        g.DrawLine(pGray, j, (h / 2) + 1 + 160, w, (h / 2) + 1 + 160); // середина экрана
+
                         j = 1;
                     }
                     catch (Exception) { }
