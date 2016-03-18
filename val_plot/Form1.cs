@@ -32,8 +32,11 @@ namespace val_plot
         static bool _continue = true;
         static bool _draw = true;
         static SerialPort _serialPort;
-        static int[] prev = new int[13];
-        static int[] curr = new int[13];
+        static int[] prev = new int[16];
+        static int[] curr = new int[16];
+        static int[] pow_prev = new int[4];
+        static int[] pow_curr = new int[4];
+
         static int d_t = 0;
         static Pen pRed = new Pen(Color.Red, 1);
         static Pen pGreen = new Pen(Color.Green, 1);
@@ -41,13 +44,14 @@ namespace val_plot
         static Pen pBlack = new Pen(Color.Black, 1);
         static Pen pGray = new Pen(Color.Gray, 1);
         static int j = 0;
-        static bool[] _isDrawing = new bool[13];
+        static bool[] _isDrawing = new bool[16];
         static Graphics g;
         static bool _joysticConnect = false, _is_joysticConnect = false;
         static int pitch_prev = 50, roll_prev = 50;
         static int pitch_curr = 50, roll_curr = 50;
+        static int yaw_curr = 50, yaw_prev = 50;
         static int pitch0 = 0, roll0 = 0;
-        static ushort force = 0, prop = 16, diff = 8, integr = 8, limP = 40, limI = 16, limD = 40;
+        static ushort force = 0, prop = 16, diff = 8, integr = 4, limP = 40, limI = 40, limD = 40;
         static uint print_mask=0;
         static bool[] motor_mask = { true, true, true, true };
 
@@ -90,28 +94,30 @@ namespace val_plot
 
         private void button2_Click(object sender, EventArgs e)
         {
-            pitch0++;
+            pitch0+=20;
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
             pitch0 = 0;
             roll0 = 0;
+            _serialPort.WriteLine("c00000\n");
+
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            roll0--;
+            roll0-=20;
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
-            roll0++;
+            roll0+=20;
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            pitch0--;
+            pitch0-=20;
         }
 
         private void button7_Click(object sender, EventArgs e)
@@ -122,7 +128,7 @@ namespace val_plot
                 string mes = Convert.ToString(force);
                 while (mes.Length < 5)
                 {
-                    mes = '0' + mes;
+                    mes = ' ' + mes;
                 }
                 _serialPort.WriteLine('f' + mes);
                 textBox1.Text = Convert.ToString(force/10) + '%';
@@ -138,7 +144,7 @@ namespace val_plot
                 string mes = Convert.ToString(limP);
                 while (mes.Length < 5)
                 {
-                    mes = '0' + mes;
+                    mes = ' ' + mes;
                 }
                 _serialPort.WriteLine('x' + mes);
             }
@@ -147,13 +153,13 @@ namespace val_plot
 
         private void button19_Click(object sender, EventArgs e)
         {
-            if (limP < 99)
+            if (limP < 300)
             {
                 limP++;
                 string mes = Convert.ToString(limP);
                 while (mes.Length < 5)
                 {
-                    mes = '0' + mes;
+                    mes = ' ' + mes;
                 }
                 _serialPort.WriteLine('x' + mes);
             }
@@ -162,13 +168,13 @@ namespace val_plot
 
         private void button18_Click(object sender, EventArgs e)
         {
-            if (limD < 99)
+            if (limD < 300)
             {
                 limD++;
                 string mes = Convert.ToString(limD);
                 while (mes.Length < 5)
                 {
-                    mes = '0' + mes;
+                    mes = ' ' + mes;
                 }
                 _serialPort.WriteLine('z' + mes);
             }
@@ -178,7 +184,7 @@ namespace val_plot
         private void button22_Click(object sender, EventArgs e)
         {
             print_mask = 0;
-            for(var k=0;k<13;k++)
+            for(var k=0;k<16;k++)
             {
                 if(_isDrawing[k])
                 {
@@ -188,21 +194,22 @@ namespace val_plot
             string mes = Convert.ToString(print_mask);
             while (mes.Length < 5)
             {
-                mes = '0' + mes;
+                mes = ' ' + mes;
             }
+            _serialPort.WriteLine("l00000\n");
             _serialPort.WriteLine('m' + mes);
 
         }
 
         private void button20_Click(object sender, EventArgs e)
         {
-            if (limI < 99)
+            if (limI < 300)
             {
                 limI++;
                 string mes = Convert.ToString(limI);
                 while (mes.Length < 5)
                 {
-                    mes = '0' + mes;
+                    mes = ' ' + mes;
                 }
                 _serialPort.WriteLine('w' + mes);
             }
@@ -217,7 +224,7 @@ namespace val_plot
                 string mes = Convert.ToString(limI);
                 while (mes.Length < 5)
                 {
-                    mes = '0' + mes;
+                    mes = ' ' + mes;
                 }
                 _serialPort.WriteLine('w' + mes);
             }
@@ -233,7 +240,7 @@ namespace val_plot
                 string mes = Convert.ToString(limP);
                 while (mes.Length < 5)
                 {
-                    mes = '0' + mes;
+                    mes = ' ' + mes;
                 }
                 _serialPort.WriteLine('x' + mes);
             }
@@ -258,7 +265,7 @@ namespace val_plot
                 string mes = Convert.ToString(limI);
                 while (mes.Length < 5)
                 {
-                    mes = '0' + mes;
+                    mes = ' ' + mes;
                 }
                 _serialPort.WriteLine('w' + mes);
             }
@@ -278,6 +285,7 @@ namespace val_plot
             if (_serialPort.IsOpen)
             {
                 button23.BackColor = Color.LightGreen;
+                _serialPort.WriteLine("o");
             }
         }
 
@@ -294,7 +302,7 @@ namespace val_plot
                 string mes = Convert.ToString(integr);
                 while (mes.Length < 5)
                 {
-                    mes = '0' + mes;
+                    mes = ' ' + mes;
                 }
                 _serialPort.WriteLine('I' + mes);
             }
@@ -310,7 +318,7 @@ namespace val_plot
                 string mes = Convert.ToString(prop);
                 while (mes.Length < 5)
                 {
-                    mes = '0' + mes;
+                    mes = ' ' + mes;
                 }
                 _serialPort.WriteLine('P' + mes);
             }
@@ -326,7 +334,7 @@ namespace val_plot
                 string mes = Convert.ToString(diff);
                 while (mes.Length < 5)
                 {
-                    mes = '0' + mes;
+                    mes = ' ' + mes;
                 }
                 _serialPort.WriteLine('D' + mes);
             }
@@ -348,7 +356,7 @@ namespace val_plot
                 string mes = Convert.ToString(limD);
                 while (mes.Length < 5)
                 {
-                    mes = '0' + mes;
+                    mes = ' ' + mes;
                 }
                 _serialPort.WriteLine('z' + mes);
             }
@@ -379,7 +387,7 @@ namespace val_plot
             string mes = Convert.ToString(tmp);
             while (mes.Length < 5)
             {
-                mes = '0' + mes;
+                mes = ' ' + mes;
             }
             _serialPort.WriteLine('a' + mes);
 
@@ -403,7 +411,7 @@ namespace val_plot
             string mes = Convert.ToString(tmp);
             while (mes.Length < 5)
             {
-                mes = '0' + mes;
+                mes = ' ' + mes;
             }
             _serialPort.WriteLine('a' + mes);
 
@@ -427,7 +435,7 @@ namespace val_plot
             string mes = Convert.ToString(tmp);
             while (mes.Length < 5)
             {
-                mes = '0' + mes;
+                mes = ' ' + mes;
             }
             _serialPort.WriteLine('a' + mes);
 
@@ -451,7 +459,7 @@ namespace val_plot
             string mes = Convert.ToString(tmp);
             while (mes.Length < 5)
             {
-                mes = '0' + mes;
+                mes = ' ' + mes;
             }
             _serialPort.WriteLine('a' + mes);
 
@@ -469,7 +477,7 @@ namespace val_plot
                 string mes = Convert.ToString(limD);
                 while (mes.Length < 5)
                 {
-                    mes = '0' + mes;
+                    mes = ' ' + mes;
                 }
                 _serialPort.WriteLine('z' + mes);
             }
@@ -491,7 +499,7 @@ namespace val_plot
                 string mes = Convert.ToString(force);
                 while (mes.Length < 5)
                 {
-                    mes = '0' + mes;
+                    mes = ' ' + mes;
                 }
                 _serialPort.WriteLine('f' + mes);
                 textBox1.Text = Convert.ToString(force / 10) + '%';
@@ -500,13 +508,13 @@ namespace val_plot
 
         private void button12_Click(object sender, EventArgs e)
         {
-            if(prop<99)
+            if(prop<200)
             {
                 prop++;
                 string mes = Convert.ToString(prop);
                 while (mes.Length < 5)
                 {
-                    mes = '0' + mes;
+                    mes = ' ' + mes;
                 }
                 _serialPort.WriteLine('P' + mes);
             }
@@ -515,13 +523,13 @@ namespace val_plot
 
         private void button10_Click(object sender, EventArgs e)
         {
-            if (integr < 99)
+            if (integr < 200)
             {
                 integr++;
                 string mes = Convert.ToString(integr);
                 while (mes.Length < 5)
                 {
-                    mes = '0' + mes;
+                    mes = ' ' + mes;
                 }
                 _serialPort.WriteLine('I' + mes);
             }
@@ -536,7 +544,7 @@ namespace val_plot
                 string mes = Convert.ToString(diff);
                 while (mes.Length < 5)
                 {
-                    mes = '0' + mes;
+                    mes = ' ' + mes;
                 }
                 _serialPort.WriteLine('D' + mes);
             }
@@ -551,7 +559,7 @@ namespace val_plot
                 string mes = Convert.ToString(prop);
                 while (mes.Length < 5)
                 {
-                    mes = '0' + mes;
+                    mes = ' ' + mes;
                 }
                 _serialPort.WriteLine('P' + mes);
             }
@@ -567,7 +575,7 @@ namespace val_plot
                 string mes = Convert.ToString(integr);
                 while (mes.Length < 5)
                 {
-                    mes = '0' + mes;
+                    mes = ' ' + mes;
                 }
                 _serialPort.WriteLine('I' + mes);
             }
@@ -576,13 +584,13 @@ namespace val_plot
 
         private void button14_Click(object sender, EventArgs e)
         {
-            if (diff < 99)
+            if (diff < 200)
             {
                 diff++;
                 string mes = Convert.ToString(diff);
                 while (mes.Length < 5)
                 {
-                    mes = '0' + mes;
+                    mes = ' ' + mes;
                 }
                 _serialPort.WriteLine('D' + mes);
             }
@@ -615,51 +623,75 @@ namespace val_plot
                     if (_serialPort.IsOpen)
                     {
                         message = _serialPort.ReadLine();
-                        if (message[0] >= 'A' && message[0] <= 'W')
+                        if (message[0] >= 'A' && message[0] <= 'z')
                         {
                             char lol = message[0];
                             message = message.Remove(0, 1);
                             switch (lol)
                             {
                                 case 'A':
-                                    curr[0] = (Convert.ToInt32(message) + 32768) / div2;
+                                    curr[0] = ((Convert.ToInt32(message)*6 + 32768) / div2); //pitch 1
                                     break;
                                 case 'B':
-                                    curr[1] = (Convert.ToInt32(message) + 32768) / div2;
+                                    curr[1] = ((Convert.ToInt32(message)*6 + 32768) / div2); //roll
                                     break;
                                 case 'C':
-                                    curr[2] = (Convert.ToInt32(message) + 32768) / div2;
+                                    curr[2] = ((Convert.ToInt32(message)*3 + 32768) / div2); //yaw
                                     break;
                                 case 'D':
-                                    curr[3] = (Convert.ToInt32(message) + 32768) / div2;
+                                    curr[3] = ((Convert.ToInt32(message)*200 + 32768) / div2); //proportional val on pitch
                                     break;
                                 case 'E':
-                                    curr[4] = (Convert.ToInt32(message) + 32768) / div2;
+                                    curr[4] = ((Convert.ToInt32(message)*200 + 32768) / div2); //integated val on pitch
                                     break;
                                 case 'F':
-                                    curr[5] = (Convert.ToInt32(message) + 32768) / div2;
+                                    curr[5] = ((Convert.ToInt32(message)*200 + 32768)/div2); //differential val on pitch
                                     break;
                                 case 'G':
-                                    curr[6] = (Convert.ToInt32(message) + 32768) / div2;
+                                    curr[6] = ((Convert.ToInt32(message)*200 + 32768) / div2);//proportional val on roll
                                     break;
                                 case 'H':
-                                    curr[7] = (Convert.ToInt32(message) + 32768) / div2;
+                                    curr[7] = ((Convert.ToInt32(message)*200 + 32768) / div2);//integated val on roll
                                     break;
                                 case 'I':
-                                    curr[8] = (Convert.ToInt32(message) + 32768) / div2;
+                                    curr[8] = ((Convert.ToInt32(message)*200 + 32768) / div2);//differential val on roll
                                     break;
                                 case 'J':
-                                    curr[9] = (Convert.ToInt32(message) + 32768) / div2;
+                                    curr[9] = ((Convert.ToInt32(message) + 32768) / div2) ; //proportional val on yaw
                                     break;
                                 case 'K':
-                                    curr[10] = (Convert.ToInt32(message) + 32768) / div2;
+                                    curr[10] = ((Convert.ToInt32(message) + 32768) / div2) ;//integated val on yaw
                                     break;
                                 case 'L':
-                                    curr[11] = (Convert.ToInt32(message) + 32768) / div2;
+                                    curr[11] = ((Convert.ToInt32(message) + 32768) / div2) ;//differential val on yaw
                                     break;
                                 case 'M':
-                                    d_t = (d_t / 4) + (3 * (Convert.ToInt32(message))/4);
+                                    d_t = (Convert.ToInt32(message)); // time of iteration
                                     break;
+                                case 'N':
+                                    curr[13] = (Convert.ToInt32(message) ) / div2; //altitude
+                                    break;
+                                case 'w':
+                                    pow_curr[0] = (Convert.ToInt32(message) ) * 2 / div2; //motor power
+                                    break;
+                                case 'x':
+                                    pow_curr[1] = (Convert.ToInt32(message) ) * 2 / div2;//motor power
+                                    break;
+                                case 'y':
+                                    pow_curr[2] = (Convert.ToInt32(message) ) * 2 / div2;//motor power
+                                    break;
+                                case 'z':
+                                    pow_curr[3] = (Convert.ToInt32(message) ) * 2 / div2;//motor power
+                                    break;
+                                case 'l':
+                                    string mes = Convert.ToString(force);
+                                    while (mes.Length < 5)
+                                    {
+                                        mes = ' ' + mes;
+                                    }
+                                    _serialPort.WriteLine('l' + mes);
+                                    break;
+
                                 case 'W':
                                     if (_draw)
                                     {
@@ -672,9 +704,22 @@ namespace val_plot
                                             if (_isDrawing[2 + k])
                                                 g.DrawLine(pBlue, j, prev[2 + k], j + 1, curr[2 + k]);
                                         }
+                                        if (_isDrawing[13])
+                                            g.DrawLine(pBlack, j, prev[13], j + 1, curr[13]);
+                                        if (_isDrawing[14])
+                                        {
+                                                g.DrawLine(pRed, j, pow_prev[0], j + 1, pow_curr[0]);
+                                                g.DrawLine(pGreen, j, pow_prev[1], j + 1, pow_curr[1]);
+                                                g.DrawLine(pBlue, j, pow_prev[2], j + 1, pow_curr[2]);
+                                                g.DrawLine(pBlack, j, pow_prev[3], j + 1, pow_curr[3]);
+                                        }
                                         j = (j + 1) % w;
-                                        for (var q = 0; q < 12; q++)
+                                        for (var q = 0; q < 14; q++)
                                             prev[q] = curr[q];
+                                       pow_prev[0] = pow_curr[0];
+                                       pow_prev[1] = pow_curr[1];
+                                       pow_prev[2] = pow_curr[2];
+                                       pow_prev[3] = pow_curr[3];
                                     }
                                     break;
                             }
@@ -765,15 +810,32 @@ namespace val_plot
                     var data = joystick.GetBufferedData();
                     foreach (var state in data)
                     {
+
+                        if (state.Offset == JoystickOffset.X)
+                        {
+                            yaw_curr = ((32767 - state.Value) / 4096);
+                            if (Math.Abs(yaw_curr - yaw_prev) >3 )
+                            {
+                                string mes = Convert.ToString(yaw_curr);
+                                while (mes.Length < 5)
+                                {
+                                    mes = ' ' + mes;
+                                }
+                                _serialPort.WriteLine('y' + mes);
+                                yaw_prev = yaw_curr;
+
+                            }
+                            work = true;
+                        }
                         if (state.Offset == JoystickOffset.Z)
                         {
-                            pitch_curr = ((state.Value) / 33) + 500 + pitch0 * 10;
+                            pitch_curr = ((32767 - state.Value) / 37) + pitch0;
                             if(Math.Abs(pitch_curr - pitch_prev)>100)
                             {
                                 string mes = Convert.ToString(pitch_curr);
                                 while (mes.Length < 5)
                                 {
-                                    mes = '0' + mes;
+                                    mes = ' ' + mes;
                                 }
                                 _serialPort.WriteLine('p'+mes);
                                 pitch_prev = pitch_curr;
@@ -783,13 +845,13 @@ namespace val_plot
                         }
                         if (state.Offset == JoystickOffset.RotationZ)
                         {
-                            roll_curr = ((65536 - state.Value) / 33) + 500 + roll0*10;
+                            roll_curr = ((state.Value - 32767) / 37) + roll0;
                             if (Math.Abs(roll_curr - roll_prev) > 100)
                             {
                                 string mes = Convert.ToString(roll_curr);
                                 while (mes.Length < 5)
                                 {
-                                    mes = '0' + mes;
+                                    mes = ' ' + mes;
                                 }
                                 _serialPort.WriteLine('r' + mes);
                                 roll_prev = roll_curr;
@@ -806,11 +868,11 @@ namespace val_plot
                                 case 0:
                                     if(force < 970)
                                     {
-                                        force += 30;
+                                        force += 20;
                                         string mes = Convert.ToString(force);
                                         while (mes.Length < 5)
                                         {
-                                            mes = '0' + mes;
+                                            mes =  ' ' + mes;
                                         }
                                         _serialPort.WriteLine('f'+mes);
                                     }
@@ -820,13 +882,13 @@ namespace val_plot
                                     _serialPort.WriteLine("f00000\n");
                                     break;
                                 case 18000:
-                                    if (force >29)
+                                    if (force >19)
                                     {
-                                        force -= 30;
+                                        force -= 20;
                                         string mes = Convert.ToString(force);
                                         while (mes.Length < 5)
                                         {
-                                            mes = '0' + mes;
+                                            mes = ' ' + mes;
                                         }
                                         _serialPort.WriteLine('f'+mes);
                                     }
@@ -835,7 +897,7 @@ namespace val_plot
                                     //NOP
                                     break;
                             }
-
+                            
                         }
                         if(work == false)
                         {
