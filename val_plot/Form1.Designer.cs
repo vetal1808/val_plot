@@ -390,7 +390,7 @@
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(76, 20);
             this.textBox6.TabIndex = 31;
-            this.textBox6.Text = "COM4";
+            this.textBox6.Text = "COM5";
             this.textBox6.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.textBox6.TextChanged += new System.EventHandler(this.textBox6_TextChanged);
             // 
