@@ -48,7 +48,7 @@
             this.applyMaskButton = new System.Windows.Forms.Button();
             this.comPortNameBox = new System.Windows.Forms.TextBox();
             this.connectToComPortButton = new System.Windows.Forms.Button();
-            this.textBox10 = new System.Windows.Forms.TextBox();
+            this.calculationTime = new System.Windows.Forms.TextBox();
             this.loopTimeRefreshButton = new System.Windows.Forms.Button();
             this.flRotorSwitcherButton = new System.Windows.Forms.Button();
             this.blRotorSwitcherButton = new System.Windows.Forms.Button();
@@ -67,7 +67,10 @@
             this.joysticSense = new System.Windows.Forms.NumericUpDown();
             this.label8 = new System.Windows.Forms.Label();
             this.PID_list = new System.Windows.Forms.ComboBox();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.flightModeButton = new System.Windows.Forms.ComboBox();
+            this.battetyVoltage = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.diff_limit)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.inegr_limit)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.prop_limit)).BeginInit();
@@ -77,7 +80,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.scale_of_line)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.scaling_line)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.joysticSense)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.SuspendLayout();
             // 
             // CanvasPanel
@@ -90,14 +92,14 @@
             // 
             // diff_limit
             // 
-            this.diff_limit.Location = new System.Drawing.Point(959, 569);
+            this.diff_limit.Location = new System.Drawing.Point(959, 509);
             this.diff_limit.Maximum = new decimal(new int[] {
             500,
             0,
             0,
             0});
             this.diff_limit.Name = "diff_limit";
-            this.diff_limit.Size = new System.Drawing.Size(50, 20);
+            this.diff_limit.Size = new System.Drawing.Size(40, 20);
             this.diff_limit.TabIndex = 5;
             this.diff_limit.Value = new decimal(new int[] {
             100,
@@ -108,14 +110,14 @@
             // 
             // inegr_limit
             // 
-            this.inegr_limit.Location = new System.Drawing.Point(903, 569);
+            this.inegr_limit.Location = new System.Drawing.Point(903, 509);
             this.inegr_limit.Maximum = new decimal(new int[] {
             500,
             0,
             0,
             0});
             this.inegr_limit.Name = "inegr_limit";
-            this.inegr_limit.Size = new System.Drawing.Size(50, 20);
+            this.inegr_limit.Size = new System.Drawing.Size(40, 20);
             this.inegr_limit.TabIndex = 4;
             this.inegr_limit.Value = new decimal(new int[] {
             40,
@@ -126,14 +128,14 @@
             // 
             // prop_limit
             // 
-            this.prop_limit.Location = new System.Drawing.Point(847, 569);
+            this.prop_limit.Location = new System.Drawing.Point(847, 509);
             this.prop_limit.Maximum = new decimal(new int[] {
             500,
             0,
             0,
             0});
             this.prop_limit.Name = "prop_limit";
-            this.prop_limit.Size = new System.Drawing.Size(50, 20);
+            this.prop_limit.Size = new System.Drawing.Size(43, 20);
             this.prop_limit.TabIndex = 3;
             this.prop_limit.Value = new decimal(new int[] {
             100,
@@ -144,14 +146,14 @@
             // 
             // diff_gain
             // 
-            this.diff_gain.Location = new System.Drawing.Point(959, 543);
+            this.diff_gain.Location = new System.Drawing.Point(959, 483);
             this.diff_gain.Maximum = new decimal(new int[] {
             500,
             0,
             0,
             0});
             this.diff_gain.Name = "diff_gain";
-            this.diff_gain.Size = new System.Drawing.Size(50, 20);
+            this.diff_gain.Size = new System.Drawing.Size(40, 20);
             this.diff_gain.TabIndex = 2;
             this.diff_gain.Value = new decimal(new int[] {
             35,
@@ -162,7 +164,7 @@
             // 
             // integr_gain
             // 
-            this.integr_gain.Location = new System.Drawing.Point(903, 543);
+            this.integr_gain.Location = new System.Drawing.Point(903, 483);
             this.integr_gain.Maximum = new decimal(new int[] {
             500,
             0,
@@ -174,7 +176,7 @@
             0,
             0});
             this.integr_gain.Name = "integr_gain";
-            this.integr_gain.Size = new System.Drawing.Size(50, 20);
+            this.integr_gain.Size = new System.Drawing.Size(40, 20);
             this.integr_gain.TabIndex = 1;
             this.integr_gain.Value = new decimal(new int[] {
             11,
@@ -185,14 +187,14 @@
             // 
             // prop_gain
             // 
-            this.prop_gain.Location = new System.Drawing.Point(847, 543);
+            this.prop_gain.Location = new System.Drawing.Point(847, 483);
             this.prop_gain.Maximum = new decimal(new int[] {
             1023,
             0,
             0,
             0});
             this.prop_gain.Name = "prop_gain";
-            this.prop_gain.Size = new System.Drawing.Size(50, 20);
+            this.prop_gain.Size = new System.Drawing.Size(43, 20);
             this.prop_gain.TabIndex = 0;
             this.prop_gain.Value = new decimal(new int[] {
             25,
@@ -209,34 +211,39 @@
             "pitch",
             "roll",
             "yaw",
-            "P_pitch",
-            "I_pitch",
-            "D_pitch",
-            "P_roll",
-            "I_roll",
-            "D_roll",
-            "P_yaw",
-            "I_yaw",
-            "D_yaw",
-            "loop time",
+            "Prop pitch",
+            "Integr pitch",
+            "Diff pitch",
+            "Prop roll",
+            "Integr roll",
+            "Diff roll",
+            "Prop yaw",
+            "Integr yaw",
+            "Diff yaw",
+            "baro altitude",
+            "sonar distanse",
             "altitude",
-            "alt velocity",
+            "altitude velocity",
+            "calcualtion time",
+            "battety voltage",
+            "system flags",
+            "GPS accuarcy & statellits used",
             "reserved 0",
             "reserved 1",
             "reserved 2",
             "reserved 3",
             "reserved 4",
             "reserved 5"});
-            this.checkedListBox1.Location = new System.Drawing.Point(829, 12);
+            this.checkedListBox1.Location = new System.Drawing.Point(811, 12);
             this.checkedListBox1.Name = "checkedListBox1";
-            this.checkedListBox1.Size = new System.Drawing.Size(164, 214);
+            this.checkedListBox1.Size = new System.Drawing.Size(188, 169);
             this.checkedListBox1.TabIndex = 1;
             this.checkedListBox1.SelectedIndexChanged += new System.EventHandler(this.checkedListBox1_SelectedIndexChanged);
             // 
             // drawingSwitcherButton
             // 
             this.drawingSwitcherButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-            this.drawingSwitcherButton.Location = new System.Drawing.Point(829, 264);
+            this.drawingSwitcherButton.Location = new System.Drawing.Point(811, 213);
             this.drawingSwitcherButton.Name = "drawingSwitcherButton";
             this.drawingSwitcherButton.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.drawingSwitcherButton.Size = new System.Drawing.Size(79, 25);
@@ -247,7 +254,7 @@
             // 
             // forwardOffsetButton
             // 
-            this.forwardOffsetButton.Location = new System.Drawing.Point(913, 349);
+            this.forwardOffsetButton.Location = new System.Drawing.Point(913, 300);
             this.forwardOffsetButton.Name = "forwardOffsetButton";
             this.forwardOffsetButton.Size = new System.Drawing.Size(40, 40);
             this.forwardOffsetButton.TabIndex = 3;
@@ -257,7 +264,7 @@
             // 
             // leftOffsetButton
             // 
-            this.leftOffsetButton.Location = new System.Drawing.Point(867, 395);
+            this.leftOffsetButton.Location = new System.Drawing.Point(867, 346);
             this.leftOffsetButton.Name = "leftOffsetButton";
             this.leftOffsetButton.Size = new System.Drawing.Size(40, 40);
             this.leftOffsetButton.TabIndex = 4;
@@ -267,7 +274,7 @@
             // 
             // backOffsetButton
             // 
-            this.backOffsetButton.Location = new System.Drawing.Point(913, 441);
+            this.backOffsetButton.Location = new System.Drawing.Point(913, 392);
             this.backOffsetButton.Name = "backOffsetButton";
             this.backOffsetButton.Size = new System.Drawing.Size(40, 40);
             this.backOffsetButton.TabIndex = 5;
@@ -277,7 +284,7 @@
             // 
             // rightOffsetButton
             // 
-            this.rightOffsetButton.Location = new System.Drawing.Point(959, 395);
+            this.rightOffsetButton.Location = new System.Drawing.Point(959, 346);
             this.rightOffsetButton.Name = "rightOffsetButton";
             this.rightOffsetButton.Size = new System.Drawing.Size(40, 40);
             this.rightOffsetButton.TabIndex = 6;
@@ -287,7 +294,7 @@
             // 
             // resetOffsetButton
             // 
-            this.resetOffsetButton.Location = new System.Drawing.Point(913, 395);
+            this.resetOffsetButton.Location = new System.Drawing.Point(913, 346);
             this.resetOffsetButton.Name = "resetOffsetButton";
             this.resetOffsetButton.Size = new System.Drawing.Size(40, 40);
             this.resetOffsetButton.TabIndex = 7;
@@ -297,7 +304,7 @@
             // 
             // upThrustButton
             // 
-            this.upThrustButton.Location = new System.Drawing.Point(811, 349);
+            this.upThrustButton.Location = new System.Drawing.Point(811, 300);
             this.upThrustButton.Name = "upThrustButton";
             this.upThrustButton.Size = new System.Drawing.Size(50, 40);
             this.upThrustButton.TabIndex = 8;
@@ -307,7 +314,7 @@
             // 
             // offThrustButton
             // 
-            this.offThrustButton.Location = new System.Drawing.Point(811, 395);
+            this.offThrustButton.Location = new System.Drawing.Point(811, 346);
             this.offThrustButton.Name = "offThrustButton";
             this.offThrustButton.Size = new System.Drawing.Size(50, 40);
             this.offThrustButton.TabIndex = 9;
@@ -318,7 +325,7 @@
             // downThrustButton
             // 
             this.downThrustButton.BackColor = System.Drawing.SystemColors.Control;
-            this.downThrustButton.Location = new System.Drawing.Point(811, 441);
+            this.downThrustButton.Location = new System.Drawing.Point(811, 392);
             this.downThrustButton.Name = "downThrustButton";
             this.downThrustButton.Size = new System.Drawing.Size(50, 40);
             this.downThrustButton.TabIndex = 10;
@@ -328,9 +335,9 @@
             // 
             // applyMaskButton
             // 
-            this.applyMaskButton.Location = new System.Drawing.Point(911, 264);
+            this.applyMaskButton.Location = new System.Drawing.Point(896, 213);
             this.applyMaskButton.Name = "applyMaskButton";
-            this.applyMaskButton.Size = new System.Drawing.Size(79, 25);
+            this.applyMaskButton.Size = new System.Drawing.Size(103, 25);
             this.applyMaskButton.TabIndex = 27;
             this.applyMaskButton.Text = "apply mask";
             this.applyMaskButton.UseVisualStyleBackColor = true;
@@ -339,7 +346,7 @@
             // comPortNameBox
             // 
             this.comPortNameBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.comPortNameBox.Location = new System.Drawing.Point(829, 299);
+            this.comPortNameBox.Location = new System.Drawing.Point(811, 248);
             this.comPortNameBox.Name = "comPortNameBox";
             this.comPortNameBox.Size = new System.Drawing.Size(79, 21);
             this.comPortNameBox.TabIndex = 31;
@@ -351,38 +358,38 @@
             // 
             this.connectToComPortButton.BackColor = System.Drawing.Color.Red;
             this.connectToComPortButton.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.connectToComPortButton.Location = new System.Drawing.Point(911, 295);
+            this.connectToComPortButton.Location = new System.Drawing.Point(896, 244);
             this.connectToComPortButton.Name = "connectToComPortButton";
-            this.connectToComPortButton.Size = new System.Drawing.Size(79, 30);
+            this.connectToComPortButton.Size = new System.Drawing.Size(103, 30);
             this.connectToComPortButton.TabIndex = 32;
             this.connectToComPortButton.Text = "connect";
             this.connectToComPortButton.UseVisualStyleBackColor = false;
             this.connectToComPortButton.Click += new System.EventHandler(this.connectToComPortButton_Click);
             // 
-            // textBox10
+            // calculationTime
             // 
-            this.textBox10.Location = new System.Drawing.Point(856, 630);
-            this.textBox10.Name = "textBox10";
-            this.textBox10.Size = new System.Drawing.Size(123, 20);
-            this.textBox10.TabIndex = 36;
-            this.textBox10.Text = "loop time";
-            this.textBox10.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.textBox10.TextChanged += new System.EventHandler(this.textBox10_TextChanged);
+            this.calculationTime.Location = new System.Drawing.Point(881, 561);
+            this.calculationTime.Name = "calculationTime";
+            this.calculationTime.Size = new System.Drawing.Size(118, 20);
+            this.calculationTime.TabIndex = 36;
+            this.calculationTime.Text = "computing time";
+            this.calculationTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.calculationTime.TextChanged += new System.EventHandler(this.textBox10_TextChanged);
             // 
             // loopTimeRefreshButton
             // 
-            this.loopTimeRefreshButton.Location = new System.Drawing.Point(827, 630);
+            this.loopTimeRefreshButton.Location = new System.Drawing.Point(811, 561);
             this.loopTimeRefreshButton.Name = "loopTimeRefreshButton";
-            this.loopTimeRefreshButton.Size = new System.Drawing.Size(23, 20);
+            this.loopTimeRefreshButton.Size = new System.Drawing.Size(64, 43);
             this.loopTimeRefreshButton.TabIndex = 37;
-            this.loopTimeRefreshButton.Text = "Refresh";
+            this.loopTimeRefreshButton.Text = "refresh";
             this.loopTimeRefreshButton.UseVisualStyleBackColor = true;
             this.loopTimeRefreshButton.Click += new System.EventHandler(this.loopTimeRefreshButton_Click);
             // 
             // flRotorSwitcherButton
             // 
             this.flRotorSwitcherButton.BackColor = System.Drawing.Color.Lime;
-            this.flRotorSwitcherButton.Location = new System.Drawing.Point(867, 349);
+            this.flRotorSwitcherButton.Location = new System.Drawing.Point(867, 300);
             this.flRotorSwitcherButton.Name = "flRotorSwitcherButton";
             this.flRotorSwitcherButton.Size = new System.Drawing.Size(40, 40);
             this.flRotorSwitcherButton.TabIndex = 38;
@@ -393,7 +400,7 @@
             // blRotorSwitcherButton
             // 
             this.blRotorSwitcherButton.BackColor = System.Drawing.Color.Lime;
-            this.blRotorSwitcherButton.Location = new System.Drawing.Point(867, 441);
+            this.blRotorSwitcherButton.Location = new System.Drawing.Point(867, 392);
             this.blRotorSwitcherButton.Name = "blRotorSwitcherButton";
             this.blRotorSwitcherButton.Size = new System.Drawing.Size(40, 40);
             this.blRotorSwitcherButton.TabIndex = 39;
@@ -404,7 +411,7 @@
             // frRotorSwitcherButton
             // 
             this.frRotorSwitcherButton.BackColor = System.Drawing.Color.Lime;
-            this.frRotorSwitcherButton.Location = new System.Drawing.Point(959, 349);
+            this.frRotorSwitcherButton.Location = new System.Drawing.Point(959, 300);
             this.frRotorSwitcherButton.Name = "frRotorSwitcherButton";
             this.frRotorSwitcherButton.Size = new System.Drawing.Size(40, 40);
             this.frRotorSwitcherButton.TabIndex = 40;
@@ -415,7 +422,7 @@
             // brRotorSwitcherButton
             // 
             this.brRotorSwitcherButton.BackColor = System.Drawing.Color.Lime;
-            this.brRotorSwitcherButton.Location = new System.Drawing.Point(959, 441);
+            this.brRotorSwitcherButton.Location = new System.Drawing.Point(959, 392);
             this.brRotorSwitcherButton.Name = "brRotorSwitcherButton";
             this.brRotorSwitcherButton.Size = new System.Drawing.Size(40, 40);
             this.brRotorSwitcherButton.TabIndex = 41;
@@ -425,7 +432,7 @@
             // 
             // thrustValueTextbox
             // 
-            this.thrustValueTextbox.Location = new System.Drawing.Point(811, 326);
+            this.thrustValueTextbox.Location = new System.Drawing.Point(811, 277);
             this.thrustValueTextbox.Name = "thrustValueTextbox";
             this.thrustValueTextbox.Size = new System.Drawing.Size(50, 20);
             this.thrustValueTextbox.TabIndex = 42;
@@ -435,7 +442,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.Location = new System.Drawing.Point(858, 524);
+            this.label1.Location = new System.Drawing.Point(858, 464);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(17, 16);
             this.label1.TabIndex = 43;
@@ -446,7 +453,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label3.Location = new System.Drawing.Point(915, 524);
+            this.label3.Location = new System.Drawing.Point(915, 464);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(11, 16);
             this.label3.TabIndex = 44;
@@ -457,7 +464,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label4.Location = new System.Drawing.Point(967, 524);
+            this.label4.Location = new System.Drawing.Point(967, 464);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(18, 16);
             this.label4.TabIndex = 45;
@@ -468,7 +475,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label5.Location = new System.Drawing.Point(813, 547);
+            this.label5.Location = new System.Drawing.Point(813, 487);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(34, 16);
             this.label5.TabIndex = 46;
@@ -479,7 +486,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label6.Location = new System.Drawing.Point(816, 573);
+            this.label6.Location = new System.Drawing.Point(813, 513);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(31, 16);
             this.label6.TabIndex = 47;
@@ -490,7 +497,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label2.Location = new System.Drawing.Point(832, 232);
+            this.label2.Location = new System.Drawing.Point(813, 187);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(29, 16);
             this.label2.TabIndex = 50;
@@ -501,7 +508,7 @@
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label7.Location = new System.Drawing.Point(908, 232);
+            this.label7.Location = new System.Drawing.Point(902, 187);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(41, 16);
             this.label7.TabIndex = 51;
@@ -510,7 +517,7 @@
             // 
             // scale_of_line
             // 
-            this.scale_of_line.Location = new System.Drawing.Point(949, 232);
+            this.scale_of_line.Location = new System.Drawing.Point(949, 187);
             this.scale_of_line.Maximum = new decimal(new int[] {
             50000,
             0,
@@ -528,7 +535,7 @@
             // 
             // scaling_line
             // 
-            this.scaling_line.Location = new System.Drawing.Point(863, 232);
+            this.scaling_line.Location = new System.Drawing.Point(853, 187);
             this.scaling_line.Maximum = new decimal(new int[] {
             21,
             0,
@@ -541,7 +548,7 @@
             // 
             // joysticSense
             // 
-            this.joysticSense.Location = new System.Drawing.Point(940, 595);
+            this.joysticSense.Location = new System.Drawing.Point(898, 537);
             this.joysticSense.Maximum = new decimal(new int[] {
             30,
             0,
@@ -561,11 +568,11 @@
             // 
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label8.Location = new System.Drawing.Point(837, 595);
+            this.label8.Location = new System.Drawing.Point(813, 539);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(84, 16);
+            this.label8.Size = new System.Drawing.Size(78, 16);
             this.label8.TabIndex = 55;
-            this.label8.Text = "Joystic Sens";
+            this.label8.Text = "joystic sens";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // PID_list
@@ -579,41 +586,67 @@
             "Ox",
             "Oy",
             "Oz"});
-            this.PID_list.Location = new System.Drawing.Point(853, 498);
+            this.PID_list.Location = new System.Drawing.Point(891, 440);
             this.PID_list.Name = "PID_list";
-            this.PID_list.Size = new System.Drawing.Size(87, 21);
+            this.PID_list.Size = new System.Drawing.Size(108, 21);
             this.PID_list.TabIndex = 57;
             this.PID_list.SelectedIndexChanged += new System.EventHandler(this.PID_list_SelectedIndexChanged);
             // 
-            // numericUpDown1
+            // flightModeButton
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(949, 498);
-            this.numericUpDown1.Maximum = new decimal(new int[] {
-            1023,
-            0,
-            0,
-            0});
-            this.numericUpDown1.Minimum = new decimal(new int[] {
-            100,
-            0,
-            0,
-            -2147483648});
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(50, 20);
-            this.numericUpDown1.TabIndex = 58;
-            this.numericUpDown1.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numericUpDown1.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
+            this.flightModeButton.DisplayMember = "0";
+            this.flightModeButton.FormattingEnabled = true;
+            this.flightModeButton.Items.AddRange(new object[] {
+            "STAND BY",
+            "MANUAL",
+            "ALT HOLD",
+            "POS HOLD"});
+            this.flightModeButton.Location = new System.Drawing.Point(867, 276);
+            this.flightModeButton.Name = "flightModeButton";
+            this.flightModeButton.Size = new System.Drawing.Size(132, 21);
+            this.flightModeButton.TabIndex = 58;
+            this.flightModeButton.SelectedIndexChanged += new System.EventHandler(this.flightModeButton_SelectedIndexChanged);
+            // 
+            // battetyVoltage
+            // 
+            this.battetyVoltage.Location = new System.Drawing.Point(881, 584);
+            this.battetyVoltage.Name = "battetyVoltage";
+            this.battetyVoltage.Size = new System.Drawing.Size(118, 20);
+            this.battetyVoltage.TabIndex = 59;
+            this.battetyVoltage.Text = "battery voltage";
+            this.battetyVoltage.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label9.Location = new System.Drawing.Point(946, 539);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(52, 16);
+            this.label9.TabIndex = 60;
+            this.label9.Text = "degree";
+            this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label10.Location = new System.Drawing.Point(813, 445);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(72, 16);
+            this.label10.TabIndex = 61;
+            this.label10.Text = "PID setting";
+            this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1011, 657);
-            this.Controls.Add(this.numericUpDown1);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.battetyVoltage);
+            this.Controls.Add(this.flightModeButton);
             this.Controls.Add(this.PID_list);
             this.Controls.Add(this.joysticSense);
             this.Controls.Add(this.label8);
@@ -639,7 +672,7 @@
             this.Controls.Add(this.offThrustButton);
             this.Controls.Add(this.loopTimeRefreshButton);
             this.Controls.Add(this.blRotorSwitcherButton);
-            this.Controls.Add(this.textBox10);
+            this.Controls.Add(this.calculationTime);
             this.Controls.Add(this.downThrustButton);
             this.Controls.Add(this.flRotorSwitcherButton);
             this.Controls.Add(this.forwardOffsetButton);
@@ -666,7 +699,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.scale_of_line)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.scaling_line)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.joysticSense)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -688,7 +720,7 @@
         private System.Windows.Forms.Button applyMaskButton;
         private System.Windows.Forms.TextBox comPortNameBox;
         private System.Windows.Forms.Button connectToComPortButton;
-        private System.Windows.Forms.TextBox textBox10;
+        private System.Windows.Forms.TextBox calculationTime;
         private System.Windows.Forms.Button loopTimeRefreshButton;
         private System.Windows.Forms.Button flRotorSwitcherButton;
         private System.Windows.Forms.Button blRotorSwitcherButton;
@@ -713,7 +745,10 @@
         private System.Windows.Forms.NumericUpDown joysticSense;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.ComboBox PID_list;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.ComboBox flightModeButton;
+        private System.Windows.Forms.TextBox battetyVoltage;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label10;
     }
 }
 

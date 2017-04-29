@@ -27,18 +27,50 @@ namespace val_plot
 
         private const int W = 800, H = 650;
 
+        enum TX : byte
+        {
+            PITCH = (byte)'A', ROLL, YAW, THRUST, PID_CONFIG, MOTOR_MASK,
+            LOSING_CONNECTION, FLIGHT_MODE, COMMAND, TELEMETRY_MASK
+        };
+        enum RX : byte
+        {
+            PITCH = 0, ROLL, YAW,
+            PROP_PITCH, INTEGR_PITCH, DIFF_PITCH,
+            PROP_ROLL, INTEGR_ROLL, DIFF_ROLL,
+            PROP_YAW, INTEGR_YAW, DIFF_YAW,
+            BARO_ALITUDE, SONAR_DISTANSE,
+            ALTITUDE, ALTITUDE_VELOCITY,
+            COMPUTING_TIME, BATTERY_VOLTAGE, SYSTEM_FLAGS,
+            GPS_STATE
+        }
+
         public int selectedPID = 0;
-        public int [,] PID_array = new int[6,6];
+        public int[,] PID_array = new int[6, 6];
         static bool _continue = true;
         static bool _drawState = true;
         static SerialPort _serialPort;
-        const byte NumOfTypes = 24; 
+        const byte NumOfTypes = 24;
         static int[] _prev = new int[NumOfTypes];
         static int[] _curr = new int[NumOfTypes];
         static int[] _scale = new int[NumOfTypes];
         static int _joysticSens = 600;
 
-        static int _dT = 0;
+
+        private static Pen[] _penArray = new Pen[]
+            {
+                new Pen(Color.Red, 1),
+                new Pen(Color.Green, 1),
+                new Pen(Color.Blue, 1),
+                new Pen(Color.Yellow, 1),
+                new Pen(Color.Black, 1),
+                new Pen(Color.Gray, 1)
+            };
+
+        enum penColors : byte
+        {
+            none, red, green, blue, yellow, black, gray
+        }
+
 
         static Pen _pRed = new Pen(Color.Red, 1);
         static Pen _pGreen = new Pen(Color.Green, 1);
@@ -46,8 +78,9 @@ namespace val_plot
         static Pen _pBlack = new Pen(Color.Black, 1);
         static Pen _pGray = new Pen(Color.Gray, 1);
 
-        static bool[] _isDrawing = new bool[24];
+        static bool[] _isDrawing = new bool[40];
         static Graphics _g;
+        //joystic data
         static bool _isJoysticConnect = false;
         static int _pitchPrev = 0, _rollPrev = 0;
         static int _pitchCurr = 0, _rollCurr = 0;
@@ -130,7 +163,6 @@ namespace val_plot
         {
             _pitchOffset = 0;
             _rollOffset = 0;
-            _serialPort.WriteLine("c00000\n");
         }
 
         private void leftOffsetButton_Click(object sender, EventArgs e)
@@ -153,22 +185,32 @@ namespace val_plot
             if (_force < 970)
             {
                 _force += 30;
-                sendMessange(_serialPort, _force, 'J');
+                sendMessange(_serialPort, _force, (char)TX.THRUST);
                 thrustValueTextbox.Text = Convert.ToString(_force/10) + '%';
             }   
         }
 
         private void applyMaskButton_Click(object sender, EventArgs e)
         {
-            int printMask = 0, printMask2 = 0;
-            for(var k=0;k<16;k++)      
-                if(_isDrawing[k])         
-                    printMask += Convert.ToInt32(Math.Pow(2, k));
-            for (var k = 0; k < _isDrawing.Length - 16; k++)
-                if (_isDrawing[k+16])
-                    printMask2 += Convert.ToInt32(Math.Pow(2, k));
-            sendMessange(_serialPort, printMask2, 'L');
-            sendMessange(_serialPort, printMask, 'M');
+            ulong printMask = 0;
+            byte length = (byte)_isDrawing.Length;
+            if (length > 64)
+                length = 64;
+            for (byte i = 0; i < length; i++)
+            {
+                if (_isDrawing[i])
+                {
+                    printMask |= ((ulong)1 << i);
+                }
+            }
+
+            for (byte i = 0; i < 4; i++)
+            {
+                var tmp = (short) ((printMask >> (i * 16)) & 0xFFFF);
+                byte channel = (byte)TX.TELEMETRY_MASK;
+                channel += i;
+                sendMessange(_serialPort, tmp, (char)channel);
+            }
         }
 
         private void connectToComPortButton_Click(object sender, EventArgs e)
@@ -185,7 +227,6 @@ namespace val_plot
             if (_serialPort.IsOpen)
             {
                 connectToComPortButton.BackColor = Color.LightGreen;
-
             }
         }
 
@@ -201,7 +242,8 @@ namespace val_plot
 
         private void loopTimeRefreshButton_Click(object sender, EventArgs e)
         {
-            textBox10.Text = "d_t = " + Convert.ToString(_curr[12]);
+            calculationTime.Text = Convert.ToString(_curr[(byte)RX.COMPUTING_TIME]) + " ms";
+            battetyVoltage.Text = Convert.ToString(_curr[(byte)RX.BATTERY_VOLTAGE]) + " mV";      
         }
 
         private void flRotorSwitcher_Click(object sender, EventArgs e)
@@ -209,13 +251,9 @@ namespace val_plot
             _motorMask[3] = !_motorMask[3];
             byte tmp = 0;
             for(var i=0; i<4;i++)
-            {
                 if (_motorMask[i])
-                {
-                    tmp += Convert.ToByte(Math.Pow(2, i));
-                }
-            }
-            sendMessange(_serialPort, tmp, 'K');
+                    tmp |= (byte)(1 << i);
+            sendMessange(_serialPort, tmp, (char)TX.MOTOR_MASK);
             if (_motorMask[3])
                 flRotorSwitcherButton.BackColor = Color.Lime;
             else
@@ -228,8 +266,8 @@ namespace val_plot
             byte tmp = 0;
             for (var i = 0; i < 4; i++)
                 if (_motorMask[i])
-                   tmp += Convert.ToByte(Math.Pow(2, i));
-            sendMessange(_serialPort, tmp, 'K');
+                    tmp |= (byte)(1 << i);
+            sendMessange(_serialPort, tmp, (char)TX.MOTOR_MASK);
             if (_motorMask[2])
                 blRotorSwitcherButton.BackColor = Color.Lime;
             else
@@ -241,14 +279,9 @@ namespace val_plot
             _motorMask[0] = !_motorMask[0];
             byte tmp = 0;
             for (var i = 0; i < 4; i++)
-            {
                 if (_motorMask[i])
-                {
-                    tmp += Convert.ToByte(Math.Pow(2, i));
-                }
-            }
-            sendMessange(_serialPort, tmp, 'K');
-
+                    tmp |= (byte)(1 << i);
+            sendMessange(_serialPort, tmp, (char)TX.MOTOR_MASK);
             if (_motorMask[0])
                 frRotorSwitcherButton.BackColor = Color.Lime;
             else
@@ -260,13 +293,9 @@ namespace val_plot
             _motorMask[1] = !_motorMask[1];
             byte tmp = 0;
             for (var i = 0; i < 4; i++)
-            {
                 if (_motorMask[i])
-                {
-                    tmp += Convert.ToByte(Math.Pow(2, i));
-                }
-            }
-            sendMessange(_serialPort, tmp, 'K');
+                    tmp |= (byte)(1 << i);
+            sendMessange(_serialPort, tmp, (char)TX.MOTOR_MASK);
             if (_motorMask[1])
                 brRotorSwitcherButton.BackColor = Color.Lime;
             else
@@ -286,7 +315,7 @@ namespace val_plot
                 return;
             }
             PID_array[PID_num, 0] = Convert.ToInt32(prop_gain.Value);
-            sendMessange(_serialPort, computePidMessange(PID_list.SelectedIndex,0, prop_gain.Value), 'D');
+            sendMessange(_serialPort, computePidMessange(PID_list.SelectedIndex,0, prop_gain.Value), (char)TX.PID_CONFIG);
         }
 
         private void integr_gain_ValueChanged(object sender, EventArgs e)
@@ -297,7 +326,7 @@ namespace val_plot
                 return;
             }
             PID_array[PID_num, 1] = Convert.ToInt32(integr_gain.Value);
-            sendMessange(_serialPort, computePidMessange(PID_list.SelectedIndex, 1, integr_gain.Value), 'D');
+            sendMessange(_serialPort, computePidMessange(PID_list.SelectedIndex, 1, integr_gain.Value), (char)TX.PID_CONFIG);
         }
 
         private void diff_gain_ValueChanged(object sender, EventArgs e)
@@ -308,7 +337,7 @@ namespace val_plot
                 return;
             }
             PID_array[PID_num, 2] = Convert.ToInt32(diff_gain.Value);
-            sendMessange(_serialPort, computePidMessange(PID_list.SelectedIndex, 2, diff_gain.Value), 'D');
+            sendMessange(_serialPort, computePidMessange(PID_list.SelectedIndex, 2, diff_gain.Value), (char)TX.PID_CONFIG);
         }
 
         private void prop_limit_ValueChanged(object sender, EventArgs e)
@@ -319,7 +348,7 @@ namespace val_plot
                 return;
             }
             PID_array[PID_num, 3] = Convert.ToInt32(prop_limit.Value);
-            sendMessange(_serialPort, computePidMessange(PID_list.SelectedIndex, 3, prop_limit.Value), 'D');
+            sendMessange(_serialPort, computePidMessange(PID_list.SelectedIndex, 3, prop_limit.Value), (char)TX.PID_CONFIG);
         }
 
         private void inegr_limit_ValueChanged(object sender, EventArgs e)
@@ -330,7 +359,7 @@ namespace val_plot
                 return;
             }
             PID_array[PID_num, 4] = Convert.ToInt32(inegr_limit.Value);
-            sendMessange(_serialPort, computePidMessange(PID_list.SelectedIndex, 4, inegr_limit.Value), 'D');
+            sendMessange(_serialPort, computePidMessange(PID_list.SelectedIndex, 4, inegr_limit.Value), (char)TX.PID_CONFIG);
         }
 
         private void diff_limit_ValueChanged(object sender, EventArgs e)
@@ -341,7 +370,7 @@ namespace val_plot
                 return;
             }
             PID_array[PID_num, 5] = Convert.ToInt32(diff_limit.Value);
-            sendMessange(_serialPort, computePidMessange(PID_list.SelectedIndex, 5, diff_limit.Value), 'D');
+            sendMessange(_serialPort, computePidMessange(PID_list.SelectedIndex, 5, diff_limit.Value), (char)TX.PID_CONFIG);
         }
         //-------------------
         private void scale_of_line_ValueChanged(object sender, EventArgs e)
@@ -369,9 +398,14 @@ namespace val_plot
             }
         }
 
-        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        private void flightModeButton_SelectedIndexChanged(object sender, EventArgs e)
         {
-            sendMessange(_serialPort, Convert.ToInt32(numericUpDown1.Value), 'E');
+            var element = sender as ComboBox;
+            if (element != null)
+            {
+                var flightMode = element.SelectedIndex;
+                sendMessange(_serialPort, flightMode,(char)TX.FLIGHT_MODE);
+            }
         }
 
         private void joysticSense_ValueChanged(object sender, EventArgs e)
@@ -383,7 +417,7 @@ namespace val_plot
         {
             _force = 0;
             thrustValueTextbox.Text = Convert.ToString(_force / 10) + '%';
-            _serialPort.WriteLine("J00000\n");
+            sendMessange(_serialPort, _force, (char)TX.THRUST);
         }
 
         private void downThrustButton_Click(object sender, EventArgs e)
@@ -391,13 +425,14 @@ namespace val_plot
             if (_force > 29)
             {
                 _force -= 30;
-                sendMessange(_serialPort, _force, 'J');
+                sendMessange(_serialPort, _force, (char)TX.THRUST);
                 thrustValueTextbox.Text = Convert.ToString(_force / 10) + '%';
             }
         }
 
         private void Form1_Load(object sender, System.EventArgs e)
         {            
+            //initialization settings
             for (var i = 0; i < 6; i++)
             {
                 PID_array[i, 0] = 160;
@@ -408,13 +443,10 @@ namespace val_plot
                 PID_array[i, 5] = 100;
             }
 
-            for (var i = 0; i < 3; i++)
+
+            for (var i = 0; i < _scale.Length; i++)
             {
                 _scale[i] = 1000;
-            }
-            for (var i = 3; i < _scale.Length; i++)
-            {
-                _scale[i] = 10000;
             }
         }
 
@@ -434,7 +466,7 @@ namespace val_plot
                         if (_serialPort.BytesToRead > 6)
                         {
                             var message = _serialPort.ReadLine();
-                            if (message[0] >= 'A' && message[0] <= 'Z')
+                            if (message[0] >= 'A' && message[0] <= 'z')
                             {
                                 var channal = message[0] - 'A';
                                 if (channal < NumOfTypes)
@@ -444,7 +476,7 @@ namespace val_plot
                                     _curr[channal] = Map(tmp, Int16.MinValue, Int16.MaxValue,
                                         (H / 2) - (H * _scale[channal] / 200), (H / 2) + (H * _scale[channal] / 200));
                                 }
-                                else if (channal == ('Z' - 'A'))
+                                else if (channal == ('z' - 'A'))
                                 {
                                     if (_drawState)
                                     {
@@ -562,7 +594,7 @@ namespace val_plot
                             if (currentTick - _lastCheckConnection > 200 * 10000) //100ms
                             {
                                 _lastCheckConnection = currentTick;
-                                sendMessange(_serialPort, 80, 'N');  //send every 100ms messange "M50\n"
+                                sendMessange(_serialPort, 80, (char)TX.LOSING_CONNECTION);  //send every 100ms messange "M50\n"
                             }
                         }
                     }
@@ -629,23 +661,23 @@ namespace val_plot
                                         //NOP
                                         break;
                                 }
-                                sendMessange(_serialPort, _force, 'J');
+                                sendMessange(_serialPort, _force, (char)TX.THRUST);
                                 break;
                         }
                     }
                     if (Math.Abs(_yawCurr - _yawPrev) > 30)
                     {
-                        sendMessange(_serialPort, _yawCurr, 'C');
+                        sendMessange(_serialPort, _yawCurr, (char)TX.YAW);
                         _yawPrev = _yawCurr;
                     }
                     if (Math.Abs(_pitchPrev - _pitchCurr) > 30)
                     {
-                        sendMessange(_serialPort, _pitchCurr - _pitchOffset, 'A');
+                        sendMessange(_serialPort, _pitchCurr - _pitchOffset, (char)TX.PITCH);
                         _pitchPrev = _pitchCurr;
                     }
                     if (Math.Abs(_rollPrev - _rollCurr) > 30)
                     {
-                        sendMessange(_serialPort, _rollCurr + _rollOffset, 'B');
+                        sendMessange(_serialPort, _rollCurr + _rollOffset, (char)TX.ROLL);
                         _rollPrev = _rollCurr;
                     }
                     
