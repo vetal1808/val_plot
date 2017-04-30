@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.CanvasPanel = new System.Windows.Forms.Panel();
             this.diff_limit = new System.Windows.Forms.NumericUpDown();
             this.inegr_limit = new System.Windows.Forms.NumericUpDown();
@@ -49,7 +50,6 @@
             this.comPortNameBox = new System.Windows.Forms.TextBox();
             this.connectToComPortButton = new System.Windows.Forms.Button();
             this.calculationTime = new System.Windows.Forms.TextBox();
-            this.loopTimeRefreshButton = new System.Windows.Forms.Button();
             this.flRotorSwitcherButton = new System.Windows.Forms.Button();
             this.blRotorSwitcherButton = new System.Windows.Forms.Button();
             this.frRotorSwitcherButton = new System.Windows.Forms.Button();
@@ -71,6 +71,11 @@
             this.battetyVoltage = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
+            this.gpsAccuracy = new System.Windows.Forms.TextBox();
+            this.sattelitesUsed = new System.Windows.Forms.TextBox();
+            this.altitudeMetod = new System.Windows.Forms.TextBox();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.diff_limit)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.inegr_limit)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.prop_limit)).BeginInit();
@@ -368,23 +373,13 @@
             // 
             // calculationTime
             // 
-            this.calculationTime.Location = new System.Drawing.Point(881, 561);
+            this.calculationTime.Location = new System.Drawing.Point(905, 561);
             this.calculationTime.Name = "calculationTime";
-            this.calculationTime.Size = new System.Drawing.Size(118, 20);
+            this.calculationTime.Size = new System.Drawing.Size(94, 20);
             this.calculationTime.TabIndex = 36;
             this.calculationTime.Text = "computing time";
             this.calculationTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.calculationTime.TextChanged += new System.EventHandler(this.textBox10_TextChanged);
-            // 
-            // loopTimeRefreshButton
-            // 
-            this.loopTimeRefreshButton.Location = new System.Drawing.Point(811, 561);
-            this.loopTimeRefreshButton.Name = "loopTimeRefreshButton";
-            this.loopTimeRefreshButton.Size = new System.Drawing.Size(64, 43);
-            this.loopTimeRefreshButton.TabIndex = 37;
-            this.loopTimeRefreshButton.Text = "refresh";
-            this.loopTimeRefreshButton.UseVisualStyleBackColor = true;
-            this.loopTimeRefreshButton.Click += new System.EventHandler(this.loopTimeRefreshButton_Click);
             // 
             // flRotorSwitcherButton
             // 
@@ -609,9 +604,9 @@
             // 
             // battetyVoltage
             // 
-            this.battetyVoltage.Location = new System.Drawing.Point(881, 584);
+            this.battetyVoltage.Location = new System.Drawing.Point(905, 587);
             this.battetyVoltage.Name = "battetyVoltage";
-            this.battetyVoltage.Size = new System.Drawing.Size(118, 20);
+            this.battetyVoltage.Size = new System.Drawing.Size(94, 20);
             this.battetyVoltage.TabIndex = 59;
             this.battetyVoltage.Text = "battery voltage";
             this.battetyVoltage.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -638,11 +633,57 @@
             this.label10.Text = "PID setting";
             this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // gpsAccuracy
+            // 
+            this.gpsAccuracy.Location = new System.Drawing.Point(816, 587);
+            this.gpsAccuracy.Name = "gpsAccuracy";
+            this.gpsAccuracy.Size = new System.Drawing.Size(81, 20);
+            this.gpsAccuracy.TabIndex = 62;
+            this.gpsAccuracy.Text = "accuracy";
+            this.gpsAccuracy.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.gpsAccuracy.TextChanged += new System.EventHandler(this.gpsAccuracy_TextChanged);
+            // 
+            // sattelitesUsed
+            // 
+            this.sattelitesUsed.Location = new System.Drawing.Point(816, 561);
+            this.sattelitesUsed.Name = "sattelitesUsed";
+            this.sattelitesUsed.Size = new System.Drawing.Size(81, 20);
+            this.sattelitesUsed.TabIndex = 63;
+            this.sattelitesUsed.Text = "sattelites";
+            this.sattelitesUsed.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // altitudeMetod
+            // 
+            this.altitudeMetod.Location = new System.Drawing.Point(816, 613);
+            this.altitudeMetod.Name = "altitudeMetod";
+            this.altitudeMetod.Size = new System.Drawing.Size(81, 20);
+            this.altitudeMetod.TabIndex = 64;
+            this.altitudeMetod.Text = "altitude method";
+            this.altitudeMetod.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(905, 613);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(94, 20);
+            this.textBox2.TabIndex = 65;
+            this.textBox2.Text = "reserved";
+            this.textBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // timer1
+            // 
+            this.timer1.Interval = 500;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1011, 657);
+            this.ClientSize = new System.Drawing.Size(1011, 669);
+            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.altitudeMetod);
+            this.Controls.Add(this.sattelitesUsed);
+            this.Controls.Add(this.gpsAccuracy);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.battetyVoltage);
@@ -670,7 +711,6 @@
             this.Controls.Add(this.prop_gain);
             this.Controls.Add(this.frRotorSwitcherButton);
             this.Controls.Add(this.offThrustButton);
-            this.Controls.Add(this.loopTimeRefreshButton);
             this.Controls.Add(this.blRotorSwitcherButton);
             this.Controls.Add(this.calculationTime);
             this.Controls.Add(this.downThrustButton);
@@ -721,7 +761,6 @@
         private System.Windows.Forms.TextBox comPortNameBox;
         private System.Windows.Forms.Button connectToComPortButton;
         private System.Windows.Forms.TextBox calculationTime;
-        private System.Windows.Forms.Button loopTimeRefreshButton;
         private System.Windows.Forms.Button flRotorSwitcherButton;
         private System.Windows.Forms.Button blRotorSwitcherButton;
         private System.Windows.Forms.Button frRotorSwitcherButton;
@@ -749,6 +788,11 @@
         private System.Windows.Forms.TextBox battetyVoltage;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.TextBox gpsAccuracy;
+        private System.Windows.Forms.TextBox sattelitesUsed;
+        private System.Windows.Forms.TextBox altitudeMetod;
+        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 

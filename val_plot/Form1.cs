@@ -20,7 +20,7 @@ namespace val_plot
         {
             InitializeComponent();
             CanvasPanel.Invalidate();
-            this.Size = new Size(1100, 700);
+            this.Size = new Size(1030, 710);
         }
 
         #region [Properties]
@@ -53,6 +53,7 @@ namespace val_plot
         static int[] _prev = new int[NumOfTypes];
         static int[] _curr = new int[NumOfTypes];
         static int[] _scale = new int[NumOfTypes];
+        static bool[] _dataForPlot = new bool[NumOfTypes];
         static int _joysticSens = 600;
 
 
@@ -226,6 +227,7 @@ namespace val_plot
             _serialPort.Open();
             if (_serialPort.IsOpen)
             {
+                timer1.Enabled = true;
                 connectToComPortButton.BackColor = Color.LightGreen;
             }
         }
@@ -238,12 +240,6 @@ namespace val_plot
         private void textBox10_TextChanged(object sender, EventArgs e)
         {
 
-        }
-
-        private void loopTimeRefreshButton_Click(object sender, EventArgs e)
-        {
-            calculationTime.Text = Convert.ToString(_curr[(byte)RX.COMPUTING_TIME]) + " ms";
-            battetyVoltage.Text = Convert.ToString(_curr[(byte)RX.BATTERY_VOLTAGE]) + " mV";      
         }
 
         private void flRotorSwitcher_Click(object sender, EventArgs e)
@@ -408,6 +404,17 @@ namespace val_plot
             }
         }
 
+        private void gpsAccuracy_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            calculationTime.Text = Convert.ToString(_curr[(byte)RX.COMPUTING_TIME]) + " ms";
+            battetyVoltage.Text = Convert.ToString(_curr[(byte)RX.BATTERY_VOLTAGE]) + " mV";
+        }
+
         private void joysticSense_ValueChanged(object sender, EventArgs e)
         {
             _joysticSens = Convert.ToUInt16(joysticSense.Value)*60;
@@ -442,12 +449,13 @@ namespace val_plot
                 PID_array[i, 4] = 40;
                 PID_array[i, 5] = 100;
             }
-
-
             for (var i = 0; i < _scale.Length; i++)
             {
+                _dataForPlot[i] = true;
                 _scale[i] = 1000;
             }
+            _dataForPlot[(byte)RX.BATTERY_VOLTAGE] = false;
+            _dataForPlot[(byte)RX.COMPUTING_TIME] = false;
         }
 
         #endregion [Handlers]
@@ -473,8 +481,16 @@ namespace val_plot
                                 {
                                     message = message.Remove(0, 1);
                                     var tmp = Convert.ToInt32(message);
-                                    _curr[channal] = Map(tmp, Int16.MinValue, Int16.MaxValue,
+                                    if (_dataForPlot[channal] == true)
+                                    {
+                                        _curr[channal] = Map(tmp, Int16.MinValue, Int16.MaxValue,
                                         (H / 2) - (H * _scale[channal] / 200), (H / 2) + (H * _scale[channal] / 200));
+                                    }
+                                    else
+                                    {
+                                        _curr[channal] = tmp;
+                                    }
+                                    
                                 }
                                 else if (channal == ('z' - 'A'))
                                 {
@@ -482,11 +498,11 @@ namespace val_plot
                                     {
                                         for (var k = 0; k < _curr.Length; k += 3)
                                         {
-                                            if (_isDrawing[0 + k])
+                                            if (_isDrawing[0 + k] && _dataForPlot[0+k] == true)
                                                 _g.DrawLine(_pRed, carriage, _prev[0 + k], carriage + 1, _curr[0 + k]);
-                                            if (_isDrawing[1 + k])
+                                            if (_isDrawing[1 + k] && _dataForPlot[1 + k] == true)
                                                 _g.DrawLine(_pGreen, carriage, _prev[1 + k], carriage + 1, _curr[1 + k]);
-                                            if (_isDrawing[2 + k])
+                                            if (_isDrawing[2 + k] && _dataForPlot[2 + k] == true)
                                                 _g.DrawLine(_pBlue, carriage, _prev[2 + k], carriage + 1, _curr[2 + k]);
                                         }
                                         carriage = (carriage + 1) % W;
